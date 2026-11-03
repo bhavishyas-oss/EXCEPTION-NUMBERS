@@ -96,44 +96,90 @@
       border-radius: 4px;
     }
 
-    /* Tab bar */
-    .tab-bar {
+    /* Page sections */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Home page */
+    .home-container {
       display: flex;
-      gap: 0;
-      margin-bottom: 28px;
-      background: var(--bg-input);
-      border-radius: var(--radius);
-      padding: 4px;
-      max-width: 400px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      padding: 40px 0;
     }
-    .tab-btn {
+    .home-subtitle {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--fg-muted);
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    .home-buttons {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+    .home-btn {
       flex: 1;
+      min-width: 240px;
+      max-width: 300px;
+      background: var(--bg-surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 32px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+    .home-btn:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-elevated);
+      transform: translateY(-2px);
+    }
+    .home-btn-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .home-btn-label {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-deep);
+      letter-spacing: 0.02em;
+    }
+    .home-btn-desc {
+      font-size: 0.82rem;
+      color: var(--fg-muted);
+      margin-top: 8px;
+    }
+    @media (max-width: 560px) {
+      .home-buttons { flex-direction: column; align-items: center; }
+      .home-btn { min-width: 100%; max-width: 100%; padding: 36px 24px; }
+    }
+
+    /* Back button */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
       font-family: var(--font-display);
       font-size: 0.85rem;
       font-weight: 600;
-      letter-spacing: 0.02em;
-      padding: 10px 20px;
-      border: none;
-      border-radius: var(--radius-sm);
       cursor: pointer;
-      background: transparent;
-      color: var(--fg-muted);
-      transition: all 0.2s;
-      white-space: nowrap;
+      padding: 6px 0;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .tab-btn.active {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: var(--shadow-card);
-    }
-    .tab-btn:not(.active):hover {
-      color: var(--fg);
-      background: var(--border);
-    }
-
-    /* Tab content */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .back-btn:hover { color: var(--primary-deep); }
 
     /* Form card */
     .form-card {
@@ -259,9 +305,6 @@
     }
 
     /* Questions */
-    .questions-section { display: none; }
-    .questions-section.active { display: block; }
-
     .meta-strip {
       display: flex;
       gap: 16px;
@@ -447,24 +490,6 @@
       font-size: 0.8rem;
     }
 
-    /* Back button */
-    .back-btn {
-      background: none;
-      border: none;
-      color: var(--primary);
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 6px 0;
-      margin-bottom: 12px;
-      display: none;
-      align-items: center;
-      gap: 4px;
-    }
-    .back-btn.show { display: inline-flex; }
-    .back-btn:hover { color: var(--primary-deep); }
-
     @media (prefers-reduced-motion: reduce) {
       .toast, .spinner { transition: none; animation: none; }
     }
@@ -479,129 +504,144 @@
     </div>
   </div>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="form" onclick="switchTab('form')">Throughput Form</button>
-    <button class="tab-btn" data-tab="data" onclick="switchTab('data')">Data View</button>
-  </div>
-
-  <!-- THROUGHPUT FORM TAB -->
-  <div id="tab-form" class="tab-content active">
-    <div id="init-section">
-      <div class="form-card">
-        <h2>Throughput Entry</h2>
-        <div class="init-grid">
-          <div class="field-group">
-            <label class="field-label field-required" for="dc-name">DC Name</label>
-            <select id="dc-name">
-              <option value="">Select DC</option>
-              <option>Ahmedabad DC</option>
-              <option>Akola DC</option>
-              <option>Aurangabad DC</option>
-              <option>Bangalore BXD DC</option>
-              <option>Bangalore DC</option>
-              <option>Bangalore Rev DC</option>
-              <option>Bangalore XD DC</option>
-              <option>Bhopal DC</option>
-              <option>Bhubneshwar DC</option>
-              <option>CCU_Large DC</option>
-              <option>Chandigarh DC</option>
-              <option>Chennai DC</option>
-              <option>Coimbatore DC</option>
-              <option>Dibrugarh DC</option>
-              <option>Gorakhpur DC</option>
-              <option>Guwahati DC</option>
-              <option>Hubli DC</option>
-              <option>Hyderabad DC</option>
-              <option>Hyderabad REV DC</option>
-              <option>Indore DC</option>
-              <option>Jabalpur DC</option>
-              <option>Jaipur DC</option>
-              <option>Jodhpur DC</option>
-              <option>Kanpur DC</option>
-              <option>Karimnagar DC</option>
-              <option>Kochi DC</option>
-              <option>Kolkata 2 DC</option>
-              <option>Kolkata DC</option>
-              <option>Kolkata XD DC</option>
-              <option>Kozhikode DC</option>
-              <option>Lucknow DC</option>
-              <option>Ludhiana DC</option>
-              <option>Madurai DC</option>
-              <option>Moradabad DC</option>
-              <option>Mumbai DC</option>
-              <option>Mysore DC</option>
-              <option>NCR Bamnoli DC</option>
-              <option>NCR Bilaspur DC</option>
-              <option>NCR Tauru DC</option>
-              <option>Nagpur DC</option>
-              <option>OneAMD DC</option>
-              <option>OneNCR DC</option>
-              <option>OneSRT DC</option>
-              <option>Patna DC</option>
-              <option>Pune DC</option>
-              <option>Rajahmundry DC</option>
-              <option>Raipur DC</option>
-              <option>Ranchi DC</option>
-              <option>Silchar DC</option>
-              <option>Siliguri DC</option>
-              <option>Srinagar DC</option>
-              <option>Sambalpur DC</option>
-              <option>Surat DC</option>
-              <option>Trichy DC</option>
-              <option>TwoNCR DC</option>
-              <option>Udaipur DC</option>
-              <option>Udupi DC</option>
-              <option>Varanasi DC</option>
-              <option>Vijayawada DC</option>
-              <option>Visakhapatnam DC</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label class="field-label field-required" for="poc-name">POC Name</label>
-            <input type="text" id="poc-name" placeholder="Enter your name">
-          </div>
-          <div class="field-group full-row">
-            <label class="field-label field-required" for="entry-date">Date</label>
-            <input type="date" id="entry-date">
-          </div>
-        </div>
-        <div class="go-row">
-          <button class="btn btn-go" onclick="goToQuestions()">GO!</button>
-        </div>
+  <!-- PAGE: HOME -->
+  <div id="page-home" class="page active">
+    <div class="home-container">
+      <div class="home-subtitle">Select an option to get started</div>
+      <div class="home-buttons">
+        <button class="home-btn" onclick="navigate('entry')">
+          <span class="home-btn-icon">&#128221;</span>
+          <span class="home-btn-label">THROUGHPUT FORM</span>
+          <div class="home-btn-desc">Submit daily exception area numbers</div>
+        </button>
+        <button class="home-btn" onclick="navigate('data')">
+          <span class="home-btn-icon">&#128202;</span>
+          <span class="home-btn-label">DATA VIEW</span>
+          <div class="home-btn-desc">View and filter submitted data</div>
+        </button>
       </div>
-    </div>
-
-    <div id="questions-section" class="questions-section">
-      <button class="back-btn show" onclick="goBack()">&#8592; Back</button>
-      <div class="meta-strip">
-        <span><strong>DC:</strong> <span id="meta-dc">—</span></span>
-        <span><strong>POC:</strong> <span id="meta-poc">—</span></span>
-        <span><strong>Date:</strong> <span id="meta-date">—</span></span>
-      </div>
-      <div id="q-list"></div>
-
-      <div class="q-card">
-        <div class="q-number">Attachment</div>
-        <div class="q-label">Attach Base File</div>
-        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-          <div class="upload-icon">&#128206;</div>
-          <div class="upload-text">Click to upload or drag &amp; drop</div>
-          <div class="upload-hint">Max file size: 50 MB</div>
-          <input type="file" id="file-input" onchange="handleFile(this)">
-        </div>
-        <div class="file-selected" id="file-info">
-          <span class="file-name" id="file-name-display"></span>
-          <span class="file-size" id="file-size-display"></span>
-          <button class="file-remove" onclick="removeFile()" title="Remove file">&times;</button>
-        </div>
-      </div>
-
-      <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit</button>
     </div>
   </div>
 
-  <!-- DATA VIEW TAB -->
-  <div id="tab-data" class="tab-content">
+  <!-- PAGE: ENTRY (DC, POC, Date, GO!) -->
+  <div id="page-entry" class="page">
+    <button class="back-btn" onclick="navigate('home')">&#8592; Home</button>
+    <div class="form-card">
+      <h2>Throughput Entry</h2>
+      <div class="init-grid">
+        <div class="field-group">
+          <label class="field-label field-required" for="dc-name">DC Name</label>
+          <select id="dc-name">
+            <option value="">Select DC</option>
+            <option>Ahmedabad DC</option>
+            <option>Akola DC</option>
+            <option>Aurangabad DC</option>
+            <option>Bangalore BXD DC</option>
+            <option>Bangalore DC</option>
+            <option>Bangalore Rev DC</option>
+            <option>Bangalore XD DC</option>
+            <option>Bhopal DC</option>
+            <option>Bhubneshwar DC</option>
+            <option>CCU_Large DC</option>
+            <option>Chandigarh DC</option>
+            <option>Chennai DC</option>
+            <option>Coimbatore DC</option>
+            <option>Dibrugarh DC</option>
+            <option>Gorakhpur DC</option>
+            <option>Guwahati DC</option>
+            <option>Hubli DC</option>
+            <option>Hyderabad DC</option>
+            <option>Hyderabad REV DC</option>
+            <option>Indore DC</option>
+            <option>Jabalpur DC</option>
+            <option>Jaipur DC</option>
+            <option>Jodhpur DC</option>
+            <option>Kanpur DC</option>
+            <option>Karimnagar DC</option>
+            <option>Kochi DC</option>
+            <option>Kolkata 2 DC</option>
+            <option>Kolkata DC</option>
+            <option>Kolkata XD DC</option>
+            <option>Kozhikode DC</option>
+            <option>Lucknow DC</option>
+            <option>Ludhiana DC</option>
+            <option>Madurai DC</option>
+            <option>Moradabad DC</option>
+            <option>Mumbai DC</option>
+            <option>Mysore DC</option>
+            <option>NCR Bamnoli DC</option>
+            <option>NCR Bilaspur DC</option>
+            <option>NCR Tauru DC</option>
+            <option>Nagpur DC</option>
+            <option>OneAMD DC</option>
+            <option>OneNCR DC</option>
+            <option>OneSRT DC</option>
+            <option>Patna DC</option>
+            <option>Pune DC</option>
+            <option>Rajahmundry DC</option>
+            <option>Raipur DC</option>
+            <option>Ranchi DC</option>
+            <option>Silchar DC</option>
+            <option>Siliguri DC</option>
+            <option>Srinagar DC</option>
+            <option>Sambalpur DC</option>
+            <option>Surat DC</option>
+            <option>Trichy DC</option>
+            <option>TwoNCR DC</option>
+            <option>Udaipur DC</option>
+            <option>Udupi DC</option>
+            <option>Varanasi DC</option>
+            <option>Vijayawada DC</option>
+            <option>Visakhapatnam DC</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label field-required" for="poc-name">POC Name</label>
+          <input type="text" id="poc-name" placeholder="Enter your name">
+        </div>
+        <div class="field-group full-row">
+          <label class="field-label field-required" for="entry-date">Date</label>
+          <input type="date" id="entry-date">
+        </div>
+      </div>
+      <div class="go-row">
+        <button class="btn btn-go" onclick="goToQuestions()">GO!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: QUESTIONS -->
+  <div id="page-questions" class="page">
+    <button class="back-btn" onclick="navigate('entry')">&#8592; Back</button>
+    <div class="meta-strip">
+      <span><strong>DC:</strong> <span id="meta-dc">—</span></span>
+      <span><strong>POC:</strong> <span id="meta-poc">—</span></span>
+      <span><strong>Date:</strong> <span id="meta-date">—</span></span>
+    </div>
+    <div id="q-list"></div>
+
+    <div class="q-card">
+      <div class="q-number">Attachment</div>
+      <div class="q-label">Attach Base File</div>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+        <div class="upload-icon">&#128206;</div>
+        <div class="upload-text">Click to upload or drag &amp; drop</div>
+        <div class="upload-hint">Max file size: 50 MB</div>
+        <input type="file" id="file-input" onchange="handleFile(this)">
+      </div>
+      <div class="file-selected" id="file-info">
+        <span class="file-name" id="file-name-display"></span>
+        <span class="file-size" id="file-size-display"></span>
+        <button class="file-remove" onclick="removeFile()" title="Remove file">&times;</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit</button>
+  </div>
+
+  <!-- PAGE: DATA VIEW -->
+  <div id="page-data" class="page">
+    <button class="back-btn" onclick="navigate('home')">&#8592; Home</button>
     <div class="form-card" style="max-width:none">
       <h2>Submitted Data</h2>
       <div class="data-controls">
@@ -686,11 +726,12 @@
       document.getElementById("entry-date").value = y + "-" + m + "-" + d;
     })();
 
-    function switchTab(tab) {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
-      document.getElementById("tab-form").classList.toggle("active", tab === "form");
-      document.getElementById("tab-data").classList.toggle("active", tab === "data");
-      if (tab === "data") populateFilterDC();
+    // Page navigation
+    function navigate(page) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page-" + page).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (page === "data") populateFilterDC();
     }
 
     function populateFilterDC() {
@@ -717,14 +758,7 @@
       document.getElementById("meta-poc").textContent = poc;
       document.getElementById("meta-date").textContent = formatDate(date);
 
-      document.getElementById("init-section").style.display = "none";
-      document.getElementById("questions-section").classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function goBack() {
-      document.getElementById("init-section").style.display = "";
-      document.getElementById("questions-section").classList.remove("active");
+      navigate("questions");
     }
 
     function formatDate(iso) {
@@ -844,7 +878,7 @@
     function resetForm() {
       QUESTIONS.forEach((_, i) => { document.getElementById("q-" + i).value = ""; });
       removeFile();
-      goBack();
+      navigate("home");
     }
 
     async function loadData() {
