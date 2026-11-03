@@ -426,6 +426,70 @@
       .data-controls .field-group { min-width: 100%; }
     }
 
+    .section-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+    }
+    .section-card h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-deep);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      max-height: 360px;
+    }
+    .chart-wrap canvas { width: 100% !important; }
+    .placeholder-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--fg-muted);
+      font-size: 0.9rem;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+    }
+    .placeholder-msg .placeholder-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.4; }
+    .kpi-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      flex: 1;
+      min-width: 140px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      text-align: center;
+    }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary-deep);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-top: 4px;
+    }
+
     .data-table-wrap {
       overflow-x: auto;
       border-radius: var(--radius);
@@ -642,25 +706,75 @@
   <!-- PAGE: DATA VIEW -->
   <div id="page-data" class="page">
     <button class="back-btn" onclick="navigate('home')">&#8592; Home</button>
+
+    <!-- Filters -->
     <div class="form-card" style="max-width:none">
-      <h2>Submitted Data</h2>
+      <h2>Data View</h2>
       <div class="data-controls">
         <div class="field-group">
-          <label class="field-label" for="filter-dc">Filter by DC</label>
-          <select id="filter-dc" onchange="filterData()">
-            <option value="">All DCs</option>
+          <label class="field-label" for="filter-dc">Site Name</label>
+          <select id="filter-dc" onchange="applyFilters()">
+            <option value="">All Sites</option>
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label" for="filter-date">Filter by Date</label>
-          <input type="date" id="filter-date" onchange="filterData()">
+          <label class="field-label" for="filter-date">Date</label>
+          <select id="filter-date" onchange="applyFilters()">
+            <option value="">All Dates</option>
+          </select>
         </div>
-        <button class="btn btn-primary" onclick="loadData()">Refresh</button>
+        <button class="btn btn-primary" onclick="loadData()">Load Data</button>
       </div>
+    </div>
+
+    <!-- OVERALL PENDENCY -->
+    <div class="section-card">
+      <h3>Overall Pendency</h3>
+      <div class="kpi-row" id="kpi-pendency"></div>
+      <div class="chart-wrap"><canvas id="chart-pendency"></canvas></div>
+      <div class="placeholder-msg" id="pendency-empty">
+        <div class="placeholder-icon">&#128202;</div>
+        <p>Load data to view pendency chart</p>
+      </div>
+    </div>
+
+    <!-- PER DAY ENTRY -->
+    <div class="section-card">
+      <h3>Per Day Entry</h3>
+      <div class="placeholder-msg">
+        <div class="placeholder-icon">&#128196;</div>
+        <p>Logic pending — based on attached base file.<br>Entry counts will be derived from the base file uploaded in the throughput form.</p>
+      </div>
+    </div>
+
+    <!-- PER DAY RESOLVED -->
+    <div class="section-card">
+      <h3>Per Day Resolved</h3>
+      <div class="kpi-row" id="kpi-resolved"></div>
+      <div class="chart-wrap"><canvas id="chart-resolved"></canvas></div>
+      <div class="placeholder-msg" id="resolved-empty">
+        <div class="placeholder-icon">&#128202;</div>
+        <p>Load data to view resolved chart</p>
+      </div>
+    </div>
+
+    <!-- PER DAY ENTRY v/s RESOLVED -->
+    <div class="section-card">
+      <h3>Per Day Entry v/s Resolved</h3>
+      <div class="chart-wrap"><canvas id="chart-comparison"></canvas></div>
+      <div class="placeholder-msg" id="comparison-empty">
+        <div class="placeholder-icon">&#128202;</div>
+        <p>Load data to view entry v/s resolved comparison</p>
+      </div>
+    </div>
+
+    <!-- Raw Data Table -->
+    <div class="section-card">
+      <h3>Raw Data</h3>
       <div id="data-container">
         <div class="empty-state">
           <div class="empty-icon">&#128202;</div>
-          <p>Click <strong>Refresh</strong> to load submitted data from the backend sheet.</p>
+          <p>Click <strong>Load Data</strong> to fetch submitted entries.</p>
         </div>
       </div>
     </div>
@@ -672,6 +786,7 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script>
     const QUESTIONS = [
       "Total Shipments Pending at Exception",
@@ -731,8 +846,51 @@
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       document.getElementById("page-" + page).classList.add("active");
       window.scrollTo({ top: 0, behavior: "smooth" });
-      if (page === "data") populateFilterDC();
+      if (page === "data") { populateFilterDC(); if (!allData.length && SCRIPT_URL) loadData(); }
     }
+
+    // ── Chart bucket mappings ──
+    // Pending buckets: questions with "Pending" keyword
+    const PENDING_BUCKETS = [
+      { label: "Orphan", qi: 3 },
+      { label: "HOV", qi: 4 },
+      { label: "Hazy", qi: 6 },
+      { label: "Damaged", qi: 8 },
+      { label: "Empty", qi: 10 },
+      { label: "Lost & Del", qi: 12 },
+      { label: "Non API", qi: 13 },
+      { label: "RTO Marking", qi: 17 }
+    ];
+    // Resolved buckets: questions with "Resolved"/"Salvaged" keyword
+    const RESOLVED_BUCKETS = [
+      { label: "Orphan", qi: 2 },
+      { label: "HOV", qi: 5 },
+      { label: "Hazy", qi: 7 },
+      { label: "Damaged", qi: 9 },
+      { label: "Empty", qi: 11 },
+      { label: "Dock Manifests", qi: 14 },
+      { label: "Non API", qi: 15 },
+      { label: "Closed", qi: 16 },
+      { label: "RTO Marking", qi: 18 }
+    ];
+    // Comparison buckets: matched pending vs resolved by category
+    const COMPARE_BUCKETS = [
+      { label: "Orphan", pqi: 3, rqi: 2 },
+      { label: "HOV", pqi: 4, rqi: 5 },
+      { label: "Hazy", pqi: 6, rqi: 7 },
+      { label: "Damaged", pqi: 8, rqi: 9 },
+      { label: "Empty", pqi: 10, rqi: 11 },
+      { label: "Non API", pqi: 13, rqi: 15 },
+      { label: "RTO Marking", pqi: 17, rqi: 18 }
+    ];
+
+    const CHART_COLORS = [
+      "#2E8B57","#1F6F45","#AACC00","#C77700",
+      "#3498db","#9b59b6","#e74c3c","#1abc9c",
+      "#f39c12","#34495e"
+    ];
+
+    let chartPendency = null, chartResolved = null, chartComparison = null;
 
     function populateFilterDC() {
       const filter = document.getElementById("filter-dc");
@@ -744,6 +902,20 @@
         opt.textContent = main.options[i].textContent;
         filter.appendChild(opt);
       }
+    }
+
+    function populateFilterDates() {
+      const sel = document.getElementById("filter-date");
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">All Dates</option>';
+      const dates = [...new Set(allData.map(r => r[3]).filter(Boolean))].sort().reverse();
+      dates.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        sel.appendChild(opt);
+      });
+      if (currentVal && dates.includes(currentVal)) sel.value = currentVal;
     }
 
     function goToQuestions() {
@@ -893,19 +1065,218 @@
         const res = await fetch(SCRIPT_URL + "?action=getData");
         const json = await res.json();
         allData = json.data || [];
-        renderTable(allData);
+        populateFilterDates();
+        applyFilters();
       } catch (err) {
         container.innerHTML = '<div class="empty-state"><p>Failed to load data. Check your Apps Script URL.</p></div>';
       }
     }
 
-    function filterData() {
+    function applyFilters() {
       const dcFilter = document.getElementById("filter-dc").value;
       const dateFilter = document.getElementById("filter-date").value;
       let filtered = allData;
       if (dcFilter) filtered = filtered.filter(r => r[1] === dcFilter);
       if (dateFilter) filtered = filtered.filter(r => r[3] === dateFilter);
+      renderCharts(filtered);
       renderTable(filtered);
+    }
+
+    function sumBucketValues(data, buckets) {
+      return buckets.map(b => {
+        let total = 0;
+        data.forEach(row => {
+          const val = parseFloat(row[b.qi + 4]);
+          if (!isNaN(val)) total += val;
+        });
+        return total;
+      });
+    }
+
+    function getChartTheme() {
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const root = document.documentElement;
+      const dt = root.getAttribute("data-theme");
+      const dark = dt === "dark" || (dt !== "light" && isDark);
+      return {
+        gridColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+        textColor: dark ? "#a8c0ae" : "#3a4e3f",
+        tooltipBg: dark ? "#1a2b1f" : "#ffffff",
+        tooltipText: dark ? "#e0ede4" : "#1a2e1f",
+        tooltipBorder: dark ? "#2e4034" : "#d4e3d8"
+      };
+    }
+
+    function chartDefaults() {
+      const t = getChartTheme();
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: t.tooltipBg,
+            titleColor: t.tooltipText,
+            bodyColor: t.tooltipText,
+            borderColor: t.tooltipBorder,
+            borderWidth: 1,
+            cornerRadius: 6,
+            padding: 10,
+            titleFont: { family: "'Space Grotesk', sans-serif", weight: "600" },
+            bodyFont: { family: "'DM Sans', sans-serif" }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: t.textColor, font: { family: "'DM Sans', sans-serif", size: 11 } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: t.gridColor },
+            ticks: { color: t.textColor, font: { family: "'DM Sans', sans-serif", size: 11 } }
+          }
+        }
+      };
+    }
+
+    function renderCharts(data) {
+      const hasData = data.length > 0;
+
+      // ── OVERALL PENDENCY ──
+      document.getElementById("pendency-empty").style.display = hasData ? "none" : "block";
+      document.getElementById("chart-pendency").style.display = hasData ? "block" : "none";
+      document.getElementById("kpi-pendency").style.display = hasData ? "flex" : "none";
+
+      if (hasData) {
+        const pendVals = sumBucketValues(data, PENDING_BUCKETS);
+        const pendLabels = PENDING_BUCKETS.map(b => b.label);
+        // Total pending KPI (q0 → col 4)
+        let totalPending = 0;
+        data.forEach(r => { const v = parseFloat(r[4]); if (!isNaN(v)) totalPending += v; });
+
+        document.getElementById("kpi-pendency").innerHTML =
+          '<div class="kpi-card"><div class="kpi-value">' + totalPending.toLocaleString() + '</div><div class="kpi-label">Total Pending</div></div>' +
+          pendVals.map((v, i) =>
+            '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + pendLabels[i] + '</div></div>'
+          ).join("");
+
+        if (chartPendency) chartPendency.destroy();
+        const ctx1 = document.getElementById("chart-pendency").getContext("2d");
+        const opts1 = chartDefaults();
+        chartPendency = new Chart(ctx1, {
+          type: "bar",
+          data: {
+            labels: pendLabels,
+            datasets: [{
+              label: "Pending",
+              data: pendVals,
+              backgroundColor: CHART_COLORS.slice(0, pendVals.length).map(c => c + "cc"),
+              borderColor: CHART_COLORS.slice(0, pendVals.length),
+              borderWidth: 1.5,
+              borderRadius: 4,
+              maxBarThickness: 56
+            }]
+          },
+          options: opts1
+        });
+      }
+
+      // ── PER DAY RESOLVED ──
+      document.getElementById("resolved-empty").style.display = hasData ? "none" : "block";
+      document.getElementById("chart-resolved").style.display = hasData ? "block" : "none";
+      document.getElementById("kpi-resolved").style.display = hasData ? "flex" : "none";
+
+      if (hasData) {
+        const resVals = sumBucketValues(data, RESOLVED_BUCKETS);
+        const resLabels = RESOLVED_BUCKETS.map(b => b.label);
+        let totalResolved = 0;
+        data.forEach(r => { const v = parseFloat(r[5]); if (!isNaN(v)) totalResolved += v; });
+
+        document.getElementById("kpi-resolved").innerHTML =
+          '<div class="kpi-card"><div class="kpi-value">' + totalResolved.toLocaleString() + '</div><div class="kpi-label">Total Resolved</div></div>' +
+          resVals.map((v, i) =>
+            '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + resLabels[i] + '</div></div>'
+          ).join("");
+
+        if (chartResolved) chartResolved.destroy();
+        const ctx2 = document.getElementById("chart-resolved").getContext("2d");
+        const opts2 = chartDefaults();
+        chartResolved = new Chart(ctx2, {
+          type: "bar",
+          data: {
+            labels: resLabels,
+            datasets: [{
+              label: "Resolved",
+              data: resVals,
+              backgroundColor: CHART_COLORS.slice(0, resVals.length).map(c => c + "cc"),
+              borderColor: CHART_COLORS.slice(0, resVals.length),
+              borderWidth: 1.5,
+              borderRadius: 4,
+              maxBarThickness: 56
+            }]
+          },
+          options: opts2
+        });
+      }
+
+      // ── ENTRY vs RESOLVED COMPARISON ──
+      document.getElementById("comparison-empty").style.display = hasData ? "none" : "block";
+      document.getElementById("chart-comparison").style.display = hasData ? "block" : "none";
+
+      if (hasData) {
+        const compLabels = COMPARE_BUCKETS.map(b => b.label);
+        const compPending = COMPARE_BUCKETS.map(b => {
+          let sum = 0;
+          data.forEach(r => { const v = parseFloat(r[b.pqi + 4]); if (!isNaN(v)) sum += v; });
+          return sum;
+        });
+        const compResolved = COMPARE_BUCKETS.map(b => {
+          let sum = 0;
+          data.forEach(r => { const v = parseFloat(r[b.rqi + 4]); if (!isNaN(v)) sum += v; });
+          return sum;
+        });
+
+        if (chartComparison) chartComparison.destroy();
+        const ctx3 = document.getElementById("chart-comparison").getContext("2d");
+        const opts3 = chartDefaults();
+        opts3.plugins.legend = {
+          display: true,
+          position: "top",
+          labels: {
+            color: getChartTheme().textColor,
+            font: { family: "'DM Sans', sans-serif", size: 12 },
+            boxWidth: 14, boxHeight: 14, borderRadius: 3, useBorderRadius: true, padding: 16
+          }
+        };
+        chartComparison = new Chart(ctx3, {
+          type: "bar",
+          data: {
+            labels: compLabels,
+            datasets: [
+              {
+                label: "Pending (Entry)",
+                data: compPending,
+                backgroundColor: "#C77700cc",
+                borderColor: "#C77700",
+                borderWidth: 1.5,
+                borderRadius: 4,
+                maxBarThickness: 40
+              },
+              {
+                label: "Resolved",
+                data: compResolved,
+                backgroundColor: "#2E8B57cc",
+                borderColor: "#2E8B57",
+                borderWidth: 1.5,
+                borderRadius: 4,
+                maxBarThickness: 40
+              }
+            ]
+          },
+          options: opts3
+        });
+      }
     }
 
     function renderTable(data) {
