@@ -8,47 +8,27 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #F6FAF7;
-      --bg-surface: #ffffff;
-      --bg-input: #f0f5f1;
-      --fg: #1a2e1f;
-      --fg-muted: #5a6e5f;
-      --fg-label: #3a4e3f;
-      --primary: #2E8B57;
-      --primary-deep: #1F6F45;
-      --primary-hover: #267a4c;
+      --bg: #0D0D0D;
+      --bg-surface: #1A1A1A;
+      --bg-input: #242424;
+      --fg: #F5F5F5;
+      --fg-muted: #999999;
+      --fg-label: #BBBBBB;
+      --primary: #FFFFFF;
+      --primary-deep: #E0E0E0;
+      --primary-hover: #CCCCCC;
       --lime: #AACC00;
-      --amber: #C77700;
-      --border: #d4e3d8;
-      --border-focus: #2E8B57;
-      --danger: #c0392b;
-      --shadow-card: 0 1px 3px rgba(30,70,40,0.06), 0 1px 2px rgba(30,70,40,0.04);
-      --shadow-elevated: 0 4px 16px rgba(30,70,40,0.08), 0 2px 6px rgba(30,70,40,0.04);
+      --amber: #F5A623;
+      --border: #333333;
+      --border-focus: #FFFFFF;
+      --danger: #FF4D4D;
+      --shadow-card: 0 1px 4px rgba(0,0,0,0.3);
+      --shadow-elevated: 0 6px 20px rgba(0,0,0,0.5);
       --radius: 10px;
       --radius-sm: 6px;
       --font-display: 'Space Grotesk', system-ui, sans-serif;
       --font-body: 'DM Sans', system-ui, sans-serif;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f1a13;
-        --bg-surface: #1a2b1f;
-        --bg-input: #223028;
-        --fg: #e0ede4;
-        --fg-muted: #8fa896;
-        --fg-label: #a8c0ae;
-        --primary: #3eaf6e;
-        --primary-deep: #2E8B57;
-        --primary-hover: #4dc080;
-        --lime: #c2e040;
-        --amber: #e09520;
-        --border: #2e4034;
-        --border-focus: #3eaf6e;
-        --danger: #e05545;
-        --shadow-card: 0 1px 3px rgba(0,0,0,0.2);
-        --shadow-elevated: 0 4px 16px rgba(0,0,0,0.3);
-        color-scheme: dark;
-      }
+      color-scheme: dark;
     }
     body {
       background: var(--bg);
@@ -71,7 +51,7 @@
       flex-wrap: wrap;
       gap: 12px;
       padding: 20px 0 16px;
-      border-bottom: 2px solid var(--primary);
+      border-bottom: 2px solid var(--border);
       margin-bottom: 24px;
     }
     .header-title {
@@ -90,8 +70,8 @@
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: var(--primary);
-      color: #fff;
+      background: var(--amber);
+      color: #0D0D0D;
       padding: 3px 8px;
       border-radius: 4px;
     }
@@ -240,7 +220,7 @@
     }
     select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, textarea:focus {
       border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(46,139,87,0.12);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
     }
     select { cursor: pointer; }
 
@@ -260,7 +240,7 @@
     }
     .btn-primary {
       background: var(--primary);
-      color: #fff;
+      color: #0D0D0D;
     }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-primary:disabled {
@@ -268,17 +248,17 @@
       cursor: not-allowed;
     }
     .btn-go {
-      background: var(--primary-deep);
-      color: #fff;
+      background: var(--primary);
+      color: #0D0D0D;
       padding: 12px 36px;
       font-size: 1rem;
       letter-spacing: 0.04em;
       border-radius: var(--radius);
     }
-    .btn-go:hover { background: var(--primary); }
+    .btn-go:hover { background: var(--primary-hover); }
     .btn-submit {
       background: var(--primary);
-      color: #fff;
+      color: #0D0D0D;
       padding: 14px 48px;
       font-size: 1rem;
       letter-spacing: 0.02em;
@@ -295,7 +275,7 @@
       gap: 8px;
       transition: all 0.15s;
     }
-    .btn-submit:hover { background: var(--primary-deep); }
+    .btn-submit:hover { background: var(--primary-hover); }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .go-row {
@@ -355,7 +335,7 @@
     }
     .upload-zone:hover, .upload-zone.dragover {
       border-color: var(--primary);
-      background: rgba(46,139,87,0.04);
+      background: rgba(255,255,255,0.03);
     }
     .upload-zone input[type="file"] { display: none; }
     .upload-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.5; }
@@ -387,8 +367,8 @@
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: var(--primary-deep);
-      color: #fff;
+      background: var(--primary);
+      color: #0D0D0D;
       padding: 12px 28px;
       border-radius: var(--radius);
       font-size: 0.9rem;
@@ -504,8 +484,8 @@
       background: var(--bg-surface);
     }
     .data-table th {
-      background: var(--primary-deep);
-      color: #fff;
+      background: #2A2A2A;
+      color: var(--primary);
       font-family: var(--font-display);
       font-weight: 600;
       font-size: 0.72rem;
@@ -523,9 +503,9 @@
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
-    .data-table tbody tr:hover { background: rgba(46,139,87,0.04); }
+    .data-table tbody tr:hover { background: rgba(255,255,255,0.04); }
     .data-table tbody tr:nth-child(even) { background: var(--bg-input); }
-    .data-table tbody tr:nth-child(even):hover { background: rgba(46,139,87,0.06); }
+    .data-table tbody tr:nth-child(even):hover { background: rgba(255,255,255,0.06); }
 
     .empty-state {
       text-align: center;
@@ -537,8 +517,8 @@
 
     /* Config banner */
     .config-banner {
-      background: linear-gradient(135deg, rgba(170,204,0,0.1), rgba(46,139,87,0.08));
-      border: 1px solid var(--lime);
+      background: rgba(245,166,35,0.08);
+      border: 1px solid var(--amber);
       border-radius: var(--radius);
       padding: 16px 20px;
       margin-bottom: 24px;
@@ -574,7 +554,7 @@
       margin-bottom: 24px;
       max-width: 760px;
     }
-    .checklist-toggle:hover { border-color: var(--primary); background: rgba(46,139,87,0.06); }
+    .checklist-toggle:hover { border-color: var(--primary); background: rgba(255,255,255,0.04); }
     .checklist-toggle .cl-toggle-icon { font-size: 1.1rem; transition: transform 0.2s; }
     .checklist-toggle.open .cl-toggle-icon { transform: rotate(90deg); }
     .checklist-toggle .cl-toggle-progress { font-family: var(--font-body); font-size: 0.75rem; font-weight: 600; color: var(--fg-muted); margin-left: auto; letter-spacing: 0; text-transform: none; }
@@ -921,6 +901,68 @@
     let selectedFile = null;
     let allData = [];
 
+    // ── localStorage persistence ──
+    function getDraftKey() {
+      const dc = document.getElementById("dc-name").value;
+      const poc = document.getElementById("poc-name").value.trim();
+      if (!dc || !poc) return null;
+      return "sfx_draft_" + dc + "_" + poc;
+    }
+
+    function saveDraft() {
+      try {
+        const key = getDraftKey();
+        if (!key) return;
+        const answers = {};
+        QUESTIONS.forEach((_, i) => {
+          const val = document.getElementById("q-" + i).value;
+          if (val) answers[i] = val;
+        });
+        const draft = {
+          dc: document.getElementById("dc-name").value,
+          poc: document.getElementById("poc-name").value.trim(),
+          date: document.getElementById("entry-date").value,
+          answers: answers,
+          savedAt: Date.now()
+        };
+        localStorage.setItem(key, JSON.stringify(draft));
+      } catch (e) { /* storage unavailable */ }
+    }
+
+    function restoreDraft() {
+      try {
+        const key = getDraftKey();
+        if (!key) return;
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+        const draft = JSON.parse(raw);
+        // Only restore if saved within last 24 hours
+        if (Date.now() - draft.savedAt > 86400000) {
+          localStorage.removeItem(key);
+          return;
+        }
+        if (draft.date) document.getElementById("entry-date").value = draft.date;
+        if (draft.answers) {
+          Object.keys(draft.answers).forEach(i => {
+            const el = document.getElementById("q-" + i);
+            if (el) {
+              el.value = draft.answers[i];
+              updateChecklistItem(parseInt(i), true);
+            }
+          });
+        }
+        const filled = Object.keys(draft.answers || {}).length;
+        if (filled > 0) showToast("Restored " + filled + " saved answers");
+      } catch (e) { /* storage unavailable */ }
+    }
+
+    function clearDraft() {
+      try {
+        const key = getDraftKey();
+        if (key) localStorage.removeItem(key);
+      } catch (e) { /* storage unavailable */ }
+    }
+
     // Build checklist + question cards
     (function buildQuestions() {
       const container = document.getElementById("q-list");
@@ -953,10 +995,11 @@
 
       updateChecklistProgress();
 
-      // Wire live tracking on each question input
+      // Wire live tracking on each question input + auto-save
       QUESTIONS.forEach((_, i) => {
         document.getElementById("q-" + i).addEventListener("input", function() {
           updateChecklistItem(i, this.value.trim() !== "");
+          saveDraft();
         });
       });
     })();
@@ -992,6 +1035,13 @@
       const done = document.querySelectorAll(".checklist-item.done").length;
       const el = document.getElementById("cl-progress");
       if (el) el.textContent = done + " / " + total + " completed";
+    }
+
+    function toggleChecklist() {
+      const card = document.getElementById("checklist-card");
+      const btn = document.getElementById("checklist-toggle");
+      const isOpen = card.classList.toggle("show");
+      btn.classList.toggle("open", isOpen);
     }
 
     // Set default date to today
@@ -1046,9 +1096,9 @@
     ];
 
     const CHART_COLORS = [
-      "#2E8B57","#1F6F45","#AACC00","#C77700",
-      "#3498db","#9b59b6","#e74c3c","#1abc9c",
-      "#f39c12","#34495e"
+      "#FFFFFF","#F5A623","#AACC00","#5DADE2",
+      "#BB8FCE","#F1948A","#76D7C4","#F7DC6F",
+      "#85929E","#AED6F1"
     ];
 
     let chartPendency = null, chartResolved = null, chartComparison = null;
@@ -1092,6 +1142,7 @@
       document.getElementById("meta-date").textContent = formatDate(date);
 
       navigate("questions");
+      restoreDraft();
     }
 
     function formatDate(iso) {
@@ -1192,6 +1243,7 @@
         });
 
         showToast("Submitted successfully!");
+        clearDraft();
         resetForm();
       } catch (err) {
         showToast("Submission failed: " + err.message, true);
@@ -1257,16 +1309,12 @@
     }
 
     function getChartTheme() {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const root = document.documentElement;
-      const dt = root.getAttribute("data-theme");
-      const dark = dt === "dark" || (dt !== "light" && isDark);
       return {
-        gridColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
-        textColor: dark ? "#a8c0ae" : "#3a4e3f",
-        tooltipBg: dark ? "#1a2b1f" : "#ffffff",
-        tooltipText: dark ? "#e0ede4" : "#1a2e1f",
-        tooltipBorder: dark ? "#2e4034" : "#d4e3d8"
+        gridColor: "rgba(255,255,255,0.08)",
+        textColor: "#999999",
+        tooltipBg: "#1A1A1A",
+        tooltipText: "#F5F5F5",
+        tooltipBorder: "#333333"
       };
     }
 
@@ -1420,8 +1468,8 @@
               {
                 label: "Pending (Entry)",
                 data: compPending,
-                backgroundColor: "#C77700cc",
-                borderColor: "#C77700",
+                backgroundColor: "#F5A623cc",
+                borderColor: "#F5A623",
                 borderWidth: 1.5,
                 borderRadius: 4,
                 maxBarThickness: 40
@@ -1429,8 +1477,8 @@
               {
                 label: "Resolved",
                 data: compResolved,
-                backgroundColor: "#2E8B57cc",
-                borderColor: "#2E8B57",
+                backgroundColor: "#FFFFFFcc",
+                borderColor: "#FFFFFF",
                 borderWidth: 1.5,
                 borderRadius: 4,
                 maxBarThickness: 40
