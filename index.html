@@ -554,6 +554,81 @@
       font-size: 0.8rem;
     }
 
+    /* Checklist */
+    .checklist-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+    .checklist-card h3 {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-deep);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checklist-progress {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--fg-muted);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-left: auto;
+    }
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 20px;
+    }
+    @media (max-width: 600px) { .checklist-grid { grid-template-columns: 1fr; } }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      color: var(--fg-muted);
+      transition: all 0.15s;
+    }
+    .checklist-item.done {
+      color: var(--primary);
+    }
+    .checklist-item .cl-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      transition: all 0.15s;
+    }
+    .checklist-item.done .cl-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .checklist-item .cl-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .toast, .spinner { transition: none; animation: none; }
     }
@@ -682,6 +757,11 @@
       <span><strong>POC:</strong> <span id="meta-poc">—</span></span>
       <span><strong>Date:</strong> <span id="meta-date">—</span></span>
     </div>
+    <div class="checklist-card" id="checklist-card">
+      <h3>Checklist <span class="checklist-progress" id="cl-progress">0 / 0 completed</span></h3>
+      <div class="checklist-grid" id="checklist-grid"></div>
+    </div>
+
     <div id="q-list"></div>
 
     <div class="q-card">
@@ -791,37 +871,43 @@
     const QUESTIONS = [
       "Total Shipments Pending at Exception",
       "Total Number of Shipments Resolved",
-      "Orphan Shipment Salvaged Count",
       "Orphan Shipments Pending at Exception",
+      "Orphan Shipment Salvaged Count",
       "HOV Shipments Pending",
       "HOV Shipments Salvaged",
-      "Hazy Shipments Pending Resolve",
+      "Hazy Shipments Pending",
       "Hazy Shipments Resolved",
-      "Damaged Shipments Pending at Exception",
+      "Damaged Shipments Pending",
       "Damaged Shipments Resolved",
-      "Empty Shipments Pending at Exception",
+      "Empty Shipments Pending",
       "Empty Shipments Resolved",
-      "Lost and Delivered Shipments Pending at Exception",
+      "Lost and Delivered Shipments Pending",
       "Non API Shipments Pending",
+      "Non API Resolved",
       "Dock Manifests Resolved",
-      "Non API Audits (Pendency Shipments Recovered Count)",
-      "Closed Shipments Resolved",
       "RTO Marking Shipments Pending",
-      "RTO Marking Shipments Resolved"
+      "RTO Marking Shipments Resolved",
+      "Total MP Count",
+      "Total Off-Roll MP",
+      "Total On-Roll MP",
+      "MP Requirement"
     ];
 
     // ──────────────────────────────────────────────────────────
     // SET YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwT0kNMbJJlnjEKgg9ZFcHrfwfqtHdrWgSSNU1ks5EXvcVT2Y7zb1-sWCCtOky3nAL98w/exec";
+    const SCRIPT_URL = "";
     // ──────────────────────────────────────────────────────────
 
     let selectedFile = null;
     let allData = [];
 
-    // Build question cards
+    // Build checklist + question cards
     (function buildQuestions() {
       const container = document.getElementById("q-list");
+      const clGrid = document.getElementById("checklist-grid");
+
       QUESTIONS.forEach((q, i) => {
+        // Question card
         const card = document.createElement("div");
         card.className = "q-card";
         card.innerHTML =
@@ -829,8 +915,64 @@
           '<div class="q-label">' + q + '</div>' +
           '<input type="number" class="q-input" id="q-' + i + '" placeholder="Enter value" min="0">';
         container.appendChild(card);
+
+        // Checklist item
+        const cli = document.createElement("div");
+        cli.className = "checklist-item";
+        cli.id = "cl-" + i;
+        cli.innerHTML = '<span class="cl-icon"></span><span class="cl-text">' + q + '</span>';
+        clGrid.appendChild(cli);
+      });
+
+      // File attachment checklist item
+      const clFile = document.createElement("div");
+      clFile.className = "checklist-item";
+      clFile.id = "cl-file";
+      clFile.innerHTML = '<span class="cl-icon"></span><span class="cl-text">Attach Base File</span>';
+      clGrid.appendChild(clFile);
+
+      updateChecklistProgress();
+
+      // Wire live tracking on each question input
+      QUESTIONS.forEach((_, i) => {
+        document.getElementById("q-" + i).addEventListener("input", function() {
+          updateChecklistItem(i, this.value.trim() !== "");
+        });
       });
     })();
+
+    function updateChecklistItem(idx, filled) {
+      const item = document.getElementById("cl-" + idx);
+      if (!item) return;
+      if (filled) {
+        item.classList.add("done");
+        item.querySelector(".cl-icon").textContent = "✓";
+      } else {
+        item.classList.remove("done");
+        item.querySelector(".cl-icon").textContent = "";
+      }
+      updateChecklistProgress();
+    }
+
+    function updateFileChecklist(attached) {
+      const item = document.getElementById("cl-file");
+      if (!item) return;
+      if (attached) {
+        item.classList.add("done");
+        item.querySelector(".cl-icon").textContent = "✓";
+      } else {
+        item.classList.remove("done");
+        item.querySelector(".cl-icon").textContent = "";
+      }
+      updateChecklistProgress();
+    }
+
+    function updateChecklistProgress() {
+      const total = QUESTIONS.length + 1; // +1 for file
+      const done = document.querySelectorAll(".checklist-item.done").length;
+      const el = document.getElementById("cl-progress");
+      if (el) el.textContent = done + " / " + total + " completed";
+    }
 
     // Set default date to today
     (function setDefaultDate() {
@@ -852,36 +994,35 @@
     // ── Chart bucket mappings ──
     // Pending buckets: questions with "Pending" keyword
     const PENDING_BUCKETS = [
-      { label: "Orphan", qi: 3 },
+      { label: "Orphan", qi: 2 },
       { label: "HOV", qi: 4 },
       { label: "Hazy", qi: 6 },
       { label: "Damaged", qi: 8 },
       { label: "Empty", qi: 10 },
       { label: "Lost & Del", qi: 12 },
       { label: "Non API", qi: 13 },
-      { label: "RTO Marking", qi: 17 }
+      { label: "RTO Marking", qi: 16 }
     ];
     // Resolved buckets: questions with "Resolved"/"Salvaged" keyword
     const RESOLVED_BUCKETS = [
-      { label: "Orphan", qi: 2 },
+      { label: "Orphan", qi: 3 },
       { label: "HOV", qi: 5 },
       { label: "Hazy", qi: 7 },
       { label: "Damaged", qi: 9 },
       { label: "Empty", qi: 11 },
-      { label: "Dock Manifests", qi: 14 },
-      { label: "Non API", qi: 15 },
-      { label: "Closed", qi: 16 },
-      { label: "RTO Marking", qi: 18 }
+      { label: "Non API", qi: 14 },
+      { label: "Dock Manifests", qi: 15 },
+      { label: "RTO Marking", qi: 17 }
     ];
     // Comparison buckets: matched pending vs resolved by category
     const COMPARE_BUCKETS = [
-      { label: "Orphan", pqi: 3, rqi: 2 },
+      { label: "Orphan", pqi: 2, rqi: 3 },
       { label: "HOV", pqi: 4, rqi: 5 },
       { label: "Hazy", pqi: 6, rqi: 7 },
       { label: "Damaged", pqi: 8, rqi: 9 },
       { label: "Empty", pqi: 10, rqi: 11 },
-      { label: "Non API", pqi: 13, rqi: 15 },
-      { label: "RTO Marking", pqi: 17, rqi: 18 }
+      { label: "Non API", pqi: 13, rqi: 14 },
+      { label: "RTO Marking", pqi: 16, rqi: 17 }
     ];
 
     const CHART_COLORS = [
@@ -950,12 +1091,14 @@
       document.getElementById("file-name-display").textContent = file.name;
       document.getElementById("file-size-display").textContent = formatSize(file.size);
       document.getElementById("file-info").classList.add("show");
+      updateFileChecklist(true);
     }
 
     function removeFile() {
       selectedFile = null;
       document.getElementById("file-input").value = "";
       document.getElementById("file-info").classList.remove("show");
+      updateFileChecklist(false);
     }
 
     function formatSize(bytes) {
