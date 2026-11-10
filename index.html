@@ -554,7 +554,32 @@
       font-size: 0.8rem;
     }
 
-    /* Checklist */
+    /* Checklist toggle button */
+    .checklist-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary-deep);
+      letter-spacing: 0.02em;
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+    .checklist-toggle:hover { border-color: var(--primary); background: rgba(46,139,87,0.06); }
+    .checklist-toggle .cl-toggle-icon { font-size: 1.1rem; transition: transform 0.2s; }
+    .checklist-toggle.open .cl-toggle-icon { transform: rotate(90deg); }
+    .checklist-toggle .cl-toggle-progress { font-family: var(--font-body); font-size: 0.75rem; font-weight: 600; color: var(--fg-muted); margin-left: auto; letter-spacing: 0; text-transform: none; }
+
+    /* Checklist panel */
     .checklist-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -563,10 +588,12 @@
       box-shadow: var(--shadow-card);
       margin-bottom: 24px;
       max-width: 760px;
+      display: none;
     }
+    .checklist-card.show { display: block; }
     .checklist-card h3 {
       font-family: var(--font-display);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--primary-deep);
       letter-spacing: 0.04em;
@@ -574,18 +601,6 @@
       margin-bottom: 16px;
       padding-bottom: 10px;
       border-bottom: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .checklist-progress {
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--fg-muted);
-      text-transform: none;
-      letter-spacing: 0;
-      margin-left: auto;
     }
     .checklist-grid {
       display: grid;
@@ -747,6 +762,16 @@
         <button class="btn btn-go" onclick="goToQuestions()">GO!</button>
       </div>
     </div>
+
+    <button class="checklist-toggle" id="checklist-toggle" onclick="toggleChecklist()">
+      <span class="cl-toggle-icon">&#9654;</span>
+      View Checklist
+      <span class="cl-toggle-progress" id="cl-progress">0 / 0 completed</span>
+    </button>
+    <div class="checklist-card" id="checklist-card">
+      <h3>Questions to Complete</h3>
+      <div class="checklist-grid" id="checklist-grid"></div>
+    </div>
   </div>
 
   <!-- PAGE: QUESTIONS -->
@@ -757,11 +782,6 @@
       <span><strong>POC:</strong> <span id="meta-poc">—</span></span>
       <span><strong>Date:</strong> <span id="meta-date">—</span></span>
     </div>
-    <div class="checklist-card" id="checklist-card">
-      <h3>Checklist <span class="checklist-progress" id="cl-progress">0 / 0 completed</span></h3>
-      <div class="checklist-grid" id="checklist-grid"></div>
-    </div>
-
     <div id="q-list"></div>
 
     <div class="q-card">
