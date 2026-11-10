@@ -7,29 +7,81 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Light theme (default) ── */
     :root {
+      --bg: #FFFFFF;
+      --bg-surface: #F4F6F3;
+      --bg-input: #FFFFFF;
+      --fg: #1A1A1A;
+      --fg-muted: #5F6368;
+      --fg-label: #3C4043;
+      --nav: #008771;
+      --nav-deep: #005B4F;
+      --nav-hover: #006B5A;
+      --nav-text: #FFFFFF;
+      --accent: #D4D026;
+      --accent-fg: #1A1A1A;
+      --accent-soft: rgba(212,208,38,0.15);
+      --border: #DDE0DB;
+      --border-focus: #008771;
+      --danger: #D32F2F;
+      --shadow-card: 0 1px 4px rgba(0,0,0,0.06);
+      --shadow-elevated: 0 6px 20px rgba(0,0,0,0.12);
+      --radius: 10px;
+      --radius-sm: 6px;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+    }
+
+    /* ── Dark theme (system preference) ── */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0D0D0D;
+        --bg-surface: #1A1A1A;
+        --bg-input: #242424;
+        --fg: #F5F5F5;
+        --fg-muted: #999999;
+        --fg-label: #BBBBBB;
+        --nav: #00A88A;
+        --nav-deep: #008771;
+        --nav-hover: #00C9A7;
+        --nav-text: #FFFFFF;
+        --accent: #D4D026;
+        --accent-fg: #1A1A1A;
+        --accent-soft: rgba(212,208,38,0.10);
+        --border: #333333;
+        --border-focus: #00A88A;
+        --danger: #FF4D4D;
+        --shadow-card: 0 1px 4px rgba(0,0,0,0.3);
+        --shadow-elevated: 0 6px 20px rgba(0,0,0,0.5);
+        color-scheme: dark;
+      }
+    }
+
+    /* ── Dark theme (explicit toggle) ── */
+    :root[data-theme="dark"] {
       --bg: #0D0D0D;
       --bg-surface: #1A1A1A;
       --bg-input: #242424;
       --fg: #F5F5F5;
       --fg-muted: #999999;
       --fg-label: #BBBBBB;
-      --primary: #FFFFFF;
-      --primary-deep: #E0E0E0;
-      --primary-hover: #CCCCCC;
-      --lime: #AACC00;
-      --amber: #F5A623;
+      --nav: #00A88A;
+      --nav-deep: #008771;
+      --nav-hover: #00C9A7;
+      --nav-text: #FFFFFF;
+      --accent: #D4D026;
+      --accent-fg: #1A1A1A;
+      --accent-soft: rgba(212,208,38,0.10);
       --border: #333333;
-      --border-focus: #FFFFFF;
+      --border-focus: #00A88A;
       --danger: #FF4D4D;
       --shadow-card: 0 1px 4px rgba(0,0,0,0.3);
       --shadow-elevated: 0 6px 20px rgba(0,0,0,0.5);
-      --radius: 10px;
-      --radius-sm: 6px;
-      --font-display: 'Space Grotesk', system-ui, sans-serif;
-      --font-body: 'DM Sans', system-ui, sans-serif;
       color-scheme: dark;
     }
+
     body {
       background: var(--bg);
       color: var(--fg);
@@ -43,7 +95,7 @@
     img { max-width: 100%; }
     [hidden] { display: none !important; }
 
-    /* Header */
+    /* ── Header ── */
     .header {
       display: flex;
       align-items: center;
@@ -51,18 +103,21 @@
       flex-wrap: wrap;
       gap: 12px;
       padding: 20px 0 16px;
-      border-bottom: 2px solid var(--border);
+      border-bottom: 2px solid var(--nav);
       margin-bottom: 24px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .header-title {
       font-family: var(--font-display);
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--fg);
       letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     .header-badge {
       font-family: var(--font-body);
@@ -70,17 +125,38 @@
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: var(--amber);
-      color: #0D0D0D;
+      background: var(--accent);
+      color: var(--accent-fg);
       padding: 3px 8px;
       border-radius: 4px;
     }
 
-    /* Page sections */
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.15rem;
+      color: var(--fg);
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      border-color: var(--nav);
+      background: var(--accent-soft);
+    }
+
+    /* ── Page sections ── */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* Home page */
+    /* ── Home page ── */
     .home-container {
       display: flex;
       flex-direction: column;
@@ -118,7 +194,7 @@
       box-shadow: var(--shadow-card);
     }
     .home-btn:hover {
-      border-color: var(--primary);
+      border-color: var(--nav);
       box-shadow: var(--shadow-elevated);
       transform: translateY(-2px);
     }
@@ -131,7 +207,7 @@
       font-family: var(--font-display);
       font-size: 1.15rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--fg);
       letter-spacing: 0.02em;
     }
     .home-btn-desc {
@@ -144,11 +220,11 @@
       .home-btn { min-width: 100%; max-width: 100%; padding: 36px 24px; }
     }
 
-    /* Back button */
+    /* ── Back button ── */
     .back-btn {
       background: none;
       border: none;
-      color: var(--primary);
+      color: var(--nav);
       font-family: var(--font-display);
       font-size: 0.85rem;
       font-weight: 600;
@@ -159,9 +235,9 @@
       align-items: center;
       gap: 6px;
     }
-    .back-btn:hover { color: var(--primary-deep); }
+    .back-btn:hover { color: var(--nav-deep); }
 
-    /* Form card */
+    /* ── Form card ── */
     .form-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -175,13 +251,13 @@
       font-family: var(--font-display);
       font-size: 1.15rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--fg);
       margin: 0 0 20px;
       padding-bottom: 12px;
       border-bottom: 1.5px solid var(--border);
     }
 
-    /* Initial form grid */
+    /* ── Initial form grid ── */
     .init-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -220,11 +296,75 @@
     }
     select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, textarea:focus {
       border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 3px rgba(0,135,113,0.12);
     }
     select { cursor: pointer; }
 
-    /* Buttons */
+    /* ── Searchable DC dropdown ── */
+    .dc-search-wrap {
+      position: relative;
+    }
+    .dc-search-input {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      padding: 10px 34px 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-input);
+      color: var(--fg);
+      width: 100%;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .dc-search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(0,135,113,0.12);
+    }
+    .dc-search-wrap::after {
+      content: "\25BE";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-muted);
+      pointer-events: none;
+      font-size: 0.85rem;
+    }
+    .dc-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% - 1px);
+      left: 0;
+      right: 0;
+      max-height: 240px;
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-focus);
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      box-shadow: var(--shadow-elevated);
+      z-index: 50;
+    }
+    .dc-dropdown.open { display: block; }
+    .dc-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      color: var(--fg);
+      transition: background 0.1s;
+    }
+    .dc-option:hover, .dc-option.highlighted {
+      background: var(--accent-soft);
+      color: var(--fg);
+    }
+    .dc-no-match {
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+      text-align: center;
+    }
+
+    /* ── Buttons ── */
     .btn {
       font-family: var(--font-display);
       font-size: 0.9rem;
@@ -239,26 +379,26 @@
       gap: 8px;
     }
     .btn-primary {
-      background: var(--primary);
-      color: #0D0D0D;
+      background: var(--nav);
+      color: var(--nav-text);
     }
-    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:hover { background: var(--nav-hover); }
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
     .btn-go {
-      background: var(--primary);
-      color: #0D0D0D;
+      background: var(--nav);
+      color: var(--nav-text);
       padding: 12px 36px;
       font-size: 1rem;
       letter-spacing: 0.04em;
       border-radius: var(--radius);
     }
-    .btn-go:hover { background: var(--primary-hover); }
+    .btn-go:hover { background: var(--nav-hover); }
     .btn-submit {
-      background: var(--primary);
-      color: #0D0D0D;
+      background: var(--nav);
+      color: var(--nav-text);
       padding: 14px 48px;
       font-size: 1rem;
       letter-spacing: 0.02em;
@@ -275,8 +415,19 @@
       gap: 8px;
       transition: all 0.15s;
     }
-    .btn-submit:hover { background: var(--primary-hover); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:hover:not(:disabled) { background: var(--nav-hover); }
+    .btn-submit:disabled {
+      background: var(--border);
+      color: var(--fg-muted);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .submit-hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--fg-muted);
+      margin-top: 8px;
+    }
 
     .go-row {
       display: flex;
@@ -284,13 +435,14 @@
       margin-top: 20px;
     }
 
-    /* Questions */
+    /* ── Questions ── */
     .meta-strip {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       padding: 12px 16px;
-      background: var(--bg-input);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       margin-bottom: 24px;
       font-size: 0.82rem;
@@ -312,7 +464,7 @@
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--primary);
+      color: var(--nav);
       margin-bottom: 6px;
     }
     .q-label {
@@ -323,7 +475,7 @@
     }
     .q-input { font-variant-numeric: tabular-nums; }
 
-    /* File upload */
+    /* ── File upload ── */
     .upload-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius);
@@ -334,13 +486,13 @@
       background: var(--bg-input);
     }
     .upload-zone:hover, .upload-zone.dragover {
-      border-color: var(--primary);
-      background: rgba(255,255,255,0.03);
+      border-color: var(--nav);
+      background: var(--accent-soft);
     }
     .upload-zone input[type="file"] { display: none; }
     .upload-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.5; }
     .upload-text { font-size: 0.88rem; color: var(--fg-muted); }
-    .upload-text strong { color: var(--primary); }
+    .upload-text strong { color: var(--nav); }
     .upload-hint { font-size: 0.75rem; color: var(--fg-muted); margin-top: 6px; }
     .file-selected {
       display: none;
@@ -348,6 +500,7 @@
       gap: 10px;
       padding: 10px 14px;
       background: var(--bg-input);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       margin-top: 10px;
       font-size: 0.85rem;
@@ -359,16 +512,16 @@
       background: none; border: none; color: var(--danger); cursor: pointer;
       font-size: 1.1rem; padding: 2px 6px; border-radius: 4px;
     }
-    .file-remove:hover { background: rgba(192,57,43,0.1); }
+    .file-remove:hover { background: rgba(211,47,47,0.1); }
 
-    /* Toast */
+    /* ── Toast ── */
     .toast {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: var(--primary);
-      color: #0D0D0D;
+      background: var(--nav);
+      color: var(--nav-text);
       padding: 12px 28px;
       border-radius: var(--radius);
       font-size: 0.9rem;
@@ -380,9 +533,9 @@
       white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.error { background: var(--danger); }
+    .toast.error { background: var(--danger); color: #fff; }
 
-    /* Spinner */
+    /* ── Spinner ── */
     .spinner {
       display: inline-block;
       width: 18px; height: 18px;
@@ -393,7 +546,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Data View */
+    /* ── Data View ── */
     .data-controls {
       display: flex;
       gap: 12px;
@@ -418,7 +571,7 @@
       font-family: var(--font-display);
       font-size: 1rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--fg);
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-bottom: 16px;
@@ -450,6 +603,7 @@
       flex: 1;
       min-width: 140px;
       background: var(--bg-input);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 14px 18px;
       text-align: center;
@@ -458,7 +612,7 @@
       font-family: var(--font-display);
       font-size: 1.6rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--nav);
       font-variant-numeric: tabular-nums;
     }
     .kpi-label {
@@ -484,8 +638,8 @@
       background: var(--bg-surface);
     }
     .data-table th {
-      background: #2A2A2A;
-      color: var(--primary);
+      background: var(--nav-deep);
+      color: var(--nav-text);
       font-family: var(--font-display);
       font-weight: 600;
       font-size: 0.72rem;
@@ -503,9 +657,9 @@
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
-    .data-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+    .data-table tbody tr:hover { background: var(--accent-soft); }
     .data-table tbody tr:nth-child(even) { background: var(--bg-input); }
-    .data-table tbody tr:nth-child(even):hover { background: rgba(255,255,255,0.06); }
+    .data-table tbody tr:nth-child(even):hover { background: var(--accent-soft); }
 
     .empty-state {
       text-align: center;
@@ -515,10 +669,10 @@
     .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
     .empty-state p { font-size: 0.95rem; }
 
-    /* Config banner */
+    /* ── Config banner ── */
     .config-banner {
-      background: rgba(245,166,35,0.08);
-      border: 1px solid var(--amber);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
       border-radius: var(--radius);
       padding: 16px 20px;
       margin-bottom: 24px;
@@ -534,7 +688,7 @@
       font-size: 0.8rem;
     }
 
-    /* Checklist toggle button */
+    /* ── Checklist toggle button ── */
     .checklist-toggle {
       display: flex;
       align-items: center;
@@ -549,17 +703,17 @@
       font-family: var(--font-display);
       font-size: 0.9rem;
       font-weight: 600;
-      color: var(--primary-deep);
+      color: var(--fg);
       letter-spacing: 0.02em;
       margin-bottom: 24px;
       max-width: 760px;
     }
-    .checklist-toggle:hover { border-color: var(--primary); background: rgba(255,255,255,0.04); }
-    .checklist-toggle .cl-toggle-icon { font-size: 1.1rem; transition: transform 0.2s; }
+    .checklist-toggle:hover { border-color: var(--nav); background: var(--accent-soft); }
+    .checklist-toggle .cl-toggle-icon { font-size: 1.1rem; transition: transform 0.2s; color: var(--nav); }
     .checklist-toggle.open .cl-toggle-icon { transform: rotate(90deg); }
     .checklist-toggle .cl-toggle-progress { font-family: var(--font-body); font-size: 0.75rem; font-weight: 600; color: var(--fg-muted); margin-left: auto; letter-spacing: 0; text-transform: none; }
 
-    /* Checklist panel */
+    /* ── Checklist panel ── */
     .checklist-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -575,7 +729,7 @@
       font-family: var(--font-display);
       font-size: 0.85rem;
       font-weight: 700;
-      color: var(--primary-deep);
+      color: var(--fg);
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-bottom: 16px;
@@ -599,7 +753,7 @@
       transition: all 0.15s;
     }
     .checklist-item.done {
-      color: var(--primary);
+      color: var(--fg);
     }
     .checklist-item .cl-icon {
       width: 18px;
@@ -614,9 +768,9 @@
       transition: all 0.15s;
     }
     .checklist-item.done .cl-icon {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-fg);
     }
     .checklist-item .cl-text {
       overflow: hidden;
@@ -632,10 +786,13 @@
 <body>
 
   <div class="header">
-    <div class="header-title">
-      Exception Area Numbers
+    <div class="header-left">
+      <span class="header-title">Exception Area Numbers</span>
       <span class="header-badge">Trust &amp; Safety</span>
     </div>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Switch theme">
+      <span id="theme-icon">&#9789;</span>
+    </button>
   </div>
 
   <!-- PAGE: HOME -->
@@ -643,7 +800,7 @@
     <div class="home-container">
       <div class="home-subtitle">Select an option to get started</div>
       <div class="home-buttons">
-        <button class="home-btn" onclick="navigate('entry')">
+        <button class="home-btn" onclick="resetEntryForm(); navigate('entry')">
           <span class="home-btn-icon">&#128221;</span>
           <span class="home-btn-label">THROUGHPUT FORM</span>
           <div class="home-btn-desc">Submit daily exception area numbers</div>
@@ -664,70 +821,12 @@
       <h2>Throughput Entry</h2>
       <div class="init-grid">
         <div class="field-group">
-          <label class="field-label field-required" for="dc-name">DC Name</label>
-          <select id="dc-name">
-            <option value="">Select DC</option>
-            <option>Ahmedabad DC</option>
-            <option>Akola DC</option>
-            <option>Aurangabad DC</option>
-            <option>Bangalore BXD DC</option>
-            <option>Bangalore DC</option>
-            <option>Bangalore Rev DC</option>
-            <option>Bangalore XD DC</option>
-            <option>Bhopal DC</option>
-            <option>Bhubneshwar DC</option>
-            <option>CCU_Large DC</option>
-            <option>Chandigarh DC</option>
-            <option>Chennai DC</option>
-            <option>Coimbatore DC</option>
-            <option>Dibrugarh DC</option>
-            <option>Gorakhpur DC</option>
-            <option>Guwahati DC</option>
-            <option>Hubli DC</option>
-            <option>Hyderabad DC</option>
-            <option>Hyderabad REV DC</option>
-            <option>Indore DC</option>
-            <option>Jabalpur DC</option>
-            <option>Jaipur DC</option>
-            <option>Jodhpur DC</option>
-            <option>Kanpur DC</option>
-            <option>Karimnagar DC</option>
-            <option>Kochi DC</option>
-            <option>Kolkata 2 DC</option>
-            <option>Kolkata DC</option>
-            <option>Kolkata XD DC</option>
-            <option>Kozhikode DC</option>
-            <option>Lucknow DC</option>
-            <option>Ludhiana DC</option>
-            <option>Madurai DC</option>
-            <option>Moradabad DC</option>
-            <option>Mumbai DC</option>
-            <option>Mysore DC</option>
-            <option>NCR Bamnoli DC</option>
-            <option>NCR Bilaspur DC</option>
-            <option>NCR Tauru DC</option>
-            <option>Nagpur DC</option>
-            <option>OneAMD DC</option>
-            <option>OneNCR DC</option>
-            <option>OneSRT DC</option>
-            <option>Patna DC</option>
-            <option>Pune DC</option>
-            <option>Rajahmundry DC</option>
-            <option>Raipur DC</option>
-            <option>Ranchi DC</option>
-            <option>Silchar DC</option>
-            <option>Siliguri DC</option>
-            <option>Srinagar DC</option>
-            <option>Sambalpur DC</option>
-            <option>Surat DC</option>
-            <option>Trichy DC</option>
-            <option>TwoNCR DC</option>
-            <option>Udaipur DC</option>
-            <option>Udupi DC</option>
-            <option>Varanasi DC</option>
-            <option>Vijayawada DC</option>
-            <option>Visakhapatnam DC</option>
-          </select>
+          <label class="field-label field-required">DC Name</label>
+          <div class="dc-search-wrap" id="dc-search-wrap">
+            <input type="text" class="dc-search-input" id="dc-search" placeholder="Search or select DC" autocomplete="off">
+            <input type="hidden" id="dc-name" value="">
+            <div class="dc-dropdown" id="dc-dropdown"></div>
+          </div>
         </div>
         <div class="field-group">
           <label class="field-label field-required" for="poc-name">POC Name</label>
@@ -756,7 +855,7 @@
 
   <!-- PAGE: QUESTIONS -->
   <div id="page-questions" class="page">
-    <button class="back-btn" onclick="navigate('entry')">&#8592; Back</button>
+    <button class="back-btn" onclick="navigate('entry'); previewDraft()">&#8592; Back</button>
     <div class="meta-strip">
       <span><strong>DC:</strong> <span id="meta-dc">—</span></span>
       <span><strong>POC:</strong> <span id="meta-poc">—</span></span>
@@ -780,7 +879,8 @@
       </div>
     </div>
 
-    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit</button>
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()" disabled>Submit</button>
+    <div class="submit-hint" id="submit-hint">Complete all questions and attach the base file to unlock submit</div>
   </div>
 
   <!-- PAGE: DATA VIEW -->
@@ -868,6 +968,41 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script>
+    // ──────────────────────────────────────────────────────────
+    // THEME TOGGLE
+    // ──────────────────────────────────────────────────────────
+    (function loadTheme() {
+      try {
+        var saved = localStorage.getItem("sfx_theme");
+        if (saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+        else if (saved === "light") document.documentElement.setAttribute("data-theme", "light");
+      } catch(e) {}
+      updateThemeIcon();
+    })();
+
+    function toggleTheme() {
+      var current = document.documentElement.getAttribute("data-theme");
+      var isDark = current === "dark" ||
+        (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      var newTheme = isDark ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", newTheme);
+      try { localStorage.setItem("sfx_theme", newTheme); } catch(e) {}
+      updateThemeIcon();
+      // Redraw charts if data view is active
+      if (document.getElementById("page-data").classList.contains("active") && allData.length) {
+        applyFilters();
+      }
+    }
+
+    function updateThemeIcon() {
+      var el = document.getElementById("theme-icon");
+      if (!el) return;
+      var isDark = document.documentElement.getAttribute("data-theme") === "dark" ||
+        (!document.documentElement.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      el.innerHTML = isDark ? "&#9728;" : "&#9789;";
+    }
+
+    // ──────────────────────────────────────────────────────────
     const QUESTIONS = [
       "Total Shipments Pending at Exception",
       "Total Number of Shipments Resolved",
@@ -893,6 +1028,21 @@
       "MP Requirement"
     ];
 
+    const DC_LIST = [
+      "Ahmedabad DC","Akola DC","Aurangabad DC","Bangalore BXD DC","Bangalore DC",
+      "Bangalore Rev DC","Bangalore XD DC","Bhopal DC","Bhubneshwar DC","CCU_Large DC",
+      "Chandigarh DC","Chennai DC","Coimbatore DC","Dibrugarh DC","Gorakhpur DC",
+      "Guwahati DC","Hubli DC","Hyderabad DC","Hyderabad REV DC","Indore DC",
+      "Jabalpur DC","Jaipur DC","Jodhpur DC","Kanpur DC","Karimnagar DC",
+      "Kochi DC","Kolkata 2 DC","Kolkata DC","Kolkata XD DC","Kozhikode DC",
+      "Lucknow DC","Ludhiana DC","Madurai DC","Moradabad DC","Mumbai DC",
+      "Mysore DC","NCR Bamnoli DC","NCR Bilaspur DC","NCR Tauru DC","Nagpur DC",
+      "OneAMD DC","OneNCR DC","OneSRT DC","Patna DC","Pune DC",
+      "Rajahmundry DC","Raipur DC","Ranchi DC","Silchar DC","Siliguri DC",
+      "Srinagar DC","Sambalpur DC","Surat DC","Trichy DC","TwoNCR DC",
+      "Udaipur DC","Udupi DC","Varanasi DC","Vijayawada DC","Visakhapatnam DC"
+    ];
+
     // ──────────────────────────────────────────────────────────
     // SET YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE
     const SCRIPT_URL = "";
@@ -901,24 +1051,132 @@
     let selectedFile = null;
     let allData = [];
 
-    // ── localStorage persistence ──
+    // ── SEARCHABLE DC DROPDOWN ──
+    (function initDCSearch() {
+      var dropdown = document.getElementById("dc-dropdown");
+      var input = document.getElementById("dc-search");
+      var hidden = document.getElementById("dc-name");
+      var wrap = document.getElementById("dc-search-wrap");
+
+      DC_LIST.forEach(function(dc) {
+        var div = document.createElement("div");
+        div.className = "dc-option";
+        div.textContent = dc;
+        div.addEventListener("mousedown", function(e) {
+          e.preventDefault(); // Prevent blur from firing before click
+          hidden.value = dc;
+          input.value = dc;
+          dropdown.classList.remove("open");
+          previewDraft();
+        });
+        dropdown.appendChild(div);
+      });
+
+      input.addEventListener("focus", function() {
+        filterDCDropdown(this.value);
+        dropdown.classList.add("open");
+      });
+
+      input.addEventListener("input", function() {
+        hidden.value = "";
+        filterDCDropdown(this.value);
+        dropdown.classList.add("open");
+      });
+
+      input.addEventListener("blur", function() {
+        setTimeout(function() {
+          dropdown.classList.remove("open");
+          // Auto-match typed value
+          if (!hidden.value && input.value) {
+            var match = DC_LIST.find(function(d) { return d.toLowerCase() === input.value.toLowerCase(); });
+            if (match) {
+              hidden.value = match;
+              input.value = match;
+            } else {
+              input.value = "";
+            }
+          }
+        }, 150);
+      });
+
+      // Arrow key + Enter support
+      var highlightIdx = -1;
+      input.addEventListener("keydown", function(e) {
+        var visible = Array.from(dropdown.querySelectorAll(".dc-option")).filter(function(o) { return o.style.display !== "none"; });
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          highlightIdx = Math.min(highlightIdx + 1, visible.length - 1);
+          highlightDCOptions(visible, highlightIdx);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          highlightIdx = Math.max(highlightIdx - 1, 0);
+          highlightDCOptions(visible, highlightIdx);
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          if (highlightIdx >= 0 && visible[highlightIdx]) {
+            hidden.value = visible[highlightIdx].textContent;
+            input.value = visible[highlightIdx].textContent;
+            dropdown.classList.remove("open");
+            previewDraft();
+          }
+        } else if (e.key === "Escape") {
+          dropdown.classList.remove("open");
+        } else {
+          highlightIdx = -1;
+        }
+      });
+
+      function highlightDCOptions(visible, idx) {
+        visible.forEach(function(o, i) {
+          o.classList.toggle("highlighted", i === idx);
+          if (i === idx) o.scrollIntoView({ block: "nearest" });
+        });
+      }
+    })();
+
+    function filterDCDropdown(query) {
+      var dropdown = document.getElementById("dc-dropdown");
+      var options = dropdown.querySelectorAll(".dc-option");
+      var q = query.toLowerCase();
+      var count = 0;
+      options.forEach(function(opt) {
+        var match = opt.textContent.toLowerCase().indexOf(q) !== -1;
+        opt.style.display = match ? "" : "none";
+        if (match) count++;
+      });
+      // Show/remove no-match message
+      var noMatch = dropdown.querySelector(".dc-no-match");
+      if (count === 0) {
+        if (!noMatch) {
+          noMatch = document.createElement("div");
+          noMatch.className = "dc-no-match";
+          noMatch.textContent = "No matching DC found";
+          dropdown.appendChild(noMatch);
+        }
+      } else if (noMatch) {
+        noMatch.remove();
+      }
+    }
+
+    // ── localStorage persistence (keyed by DC + POC + Date) ──
     function getDraftKey() {
-      const dc = document.getElementById("dc-name").value;
-      const poc = document.getElementById("poc-name").value.trim();
-      if (!dc || !poc) return null;
-      return "sfx_draft_" + dc + "_" + poc;
+      var dc = document.getElementById("dc-name").value;
+      var poc = document.getElementById("poc-name").value.trim();
+      var date = document.getElementById("entry-date").value;
+      if (!dc || !poc || !date) return null;
+      return "sfx_draft_" + dc + "_" + poc + "_" + date;
     }
 
     function saveDraft() {
       try {
-        const key = getDraftKey();
+        var key = getDraftKey();
         if (!key) return;
-        const answers = {};
-        QUESTIONS.forEach((_, i) => {
-          const val = document.getElementById("q-" + i).value;
+        var answers = {};
+        QUESTIONS.forEach(function(_, i) {
+          var val = document.getElementById("q-" + i).value;
           if (val) answers[i] = val;
         });
-        const draft = {
+        var draft = {
           dc: document.getElementById("dc-name").value,
           poc: document.getElementById("poc-name").value.trim(),
           date: document.getElementById("entry-date").value,
@@ -931,11 +1189,11 @@
 
     function restoreDraft() {
       try {
-        const key = getDraftKey();
+        var key = getDraftKey();
         if (!key) return;
-        const raw = localStorage.getItem(key);
+        var raw = localStorage.getItem(key);
         if (!raw) return;
-        const draft = JSON.parse(raw);
+        var draft = JSON.parse(raw);
         // Only restore if saved within last 24 hours
         if (Date.now() - draft.savedAt > 86400000) {
           localStorage.removeItem(key);
@@ -943,34 +1201,55 @@
         }
         if (draft.date) document.getElementById("entry-date").value = draft.date;
         if (draft.answers) {
-          Object.keys(draft.answers).forEach(i => {
-            const el = document.getElementById("q-" + i);
+          Object.keys(draft.answers).forEach(function(i) {
+            var el = document.getElementById("q-" + i);
             if (el) {
               el.value = draft.answers[i];
               updateChecklistItem(parseInt(i), true);
             }
           });
         }
-        const filled = Object.keys(draft.answers || {}).length;
+        var filled = Object.keys(draft.answers || {}).length;
         if (filled > 0) showToast("Restored " + filled + " saved answers");
       } catch (e) { /* storage unavailable */ }
     }
 
     function clearDraft() {
       try {
-        const key = getDraftKey();
+        var key = getDraftKey();
         if (key) localStorage.removeItem(key);
       } catch (e) { /* storage unavailable */ }
     }
 
-    // Build checklist + question cards
-    (function buildQuestions() {
-      const container = document.getElementById("q-list");
-      const clGrid = document.getElementById("checklist-grid");
+    // Preview draft state on entry page checklist
+    function previewDraft() {
+      // Reset checklist first
+      QUESTIONS.forEach(function(_, i) { updateChecklistItem(i, false); });
+      updateFileChecklist(false);
 
-      QUESTIONS.forEach((q, i) => {
+      try {
+        var key = getDraftKey();
+        if (!key) return;
+        var raw = localStorage.getItem(key);
+        if (!raw) return;
+        var draft = JSON.parse(raw);
+        if (Date.now() - draft.savedAt > 86400000) return;
+        if (draft.answers) {
+          Object.keys(draft.answers).forEach(function(i) {
+            updateChecklistItem(parseInt(i), true);
+          });
+        }
+      } catch(e) {}
+    }
+
+    // ── Build checklist + question cards ──
+    (function buildQuestions() {
+      var container = document.getElementById("q-list");
+      var clGrid = document.getElementById("checklist-grid");
+
+      QUESTIONS.forEach(function(q, i) {
         // Question card
-        const card = document.createElement("div");
+        var card = document.createElement("div");
         card.className = "q-card";
         card.innerHTML =
           '<div class="q-number">Question ' + (i + 1) + '</div>' +
@@ -979,7 +1258,7 @@
         container.appendChild(card);
 
         // Checklist item
-        const cli = document.createElement("div");
+        var cli = document.createElement("div");
         cli.className = "checklist-item";
         cli.id = "cl-" + i;
         cli.innerHTML = '<span class="cl-icon"></span><span class="cl-text">' + q + '</span>';
@@ -987,7 +1266,7 @@
       });
 
       // File attachment checklist item
-      const clFile = document.createElement("div");
+      var clFile = document.createElement("div");
       clFile.className = "checklist-item";
       clFile.id = "cl-file";
       clFile.innerHTML = '<span class="cl-icon"></span><span class="cl-text">Attach Base File</span>';
@@ -995,17 +1274,48 @@
 
       updateChecklistProgress();
 
-      // Wire live tracking on each question input + auto-save
-      QUESTIONS.forEach((_, i) => {
-        document.getElementById("q-" + i).addEventListener("input", function() {
+      // Wire live tracking + auto-save + Enter key navigation + submit check
+      QUESTIONS.forEach(function(_, i) {
+        var el = document.getElementById("q-" + i);
+        el.addEventListener("input", function() {
           updateChecklistItem(i, this.value.trim() !== "");
           saveDraft();
+          checkSubmitReady();
+        });
+        // Enter key → jump to next question
+        el.addEventListener("keydown", function(e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            var next = document.getElementById("q-" + (i + 1));
+            if (next) {
+              next.focus();
+              next.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+              // Last question → scroll to file upload
+              document.getElementById("upload-zone").scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
         });
       });
     })();
 
+    // ── Submit button lock/unlock ──
+    function checkSubmitReady() {
+      var btn = document.getElementById("submit-btn");
+      var hint = document.getElementById("submit-hint");
+      if (!btn) return;
+      var ready = true;
+      for (var i = 0; i < QUESTIONS.length; i++) {
+        var el = document.getElementById("q-" + i);
+        if (!el || !el.value.trim()) { ready = false; break; }
+      }
+      if (!selectedFile) ready = false;
+      btn.disabled = !ready;
+      if (hint) hint.style.display = ready ? "none" : "block";
+    }
+
     function updateChecklistItem(idx, filled) {
-      const item = document.getElementById("cl-" + idx);
+      var item = document.getElementById("cl-" + idx);
       if (!item) return;
       if (filled) {
         item.classList.add("done");
@@ -1018,7 +1328,7 @@
     }
 
     function updateFileChecklist(attached) {
-      const item = document.getElementById("cl-file");
+      var item = document.getElementById("cl-file");
       if (!item) return;
       if (attached) {
         item.classList.add("done");
@@ -1031,38 +1341,56 @@
     }
 
     function updateChecklistProgress() {
-      const total = QUESTIONS.length + 1; // +1 for file
-      const done = document.querySelectorAll(".checklist-item.done").length;
-      const el = document.getElementById("cl-progress");
+      var total = QUESTIONS.length + 1;
+      var done = document.querySelectorAll(".checklist-item.done").length;
+      var el = document.getElementById("cl-progress");
       if (el) el.textContent = done + " / " + total + " completed";
     }
 
     function toggleChecklist() {
-      const card = document.getElementById("checklist-card");
-      const btn = document.getElementById("checklist-toggle");
-      const isOpen = card.classList.toggle("show");
+      var card = document.getElementById("checklist-card");
+      var btn = document.getElementById("checklist-toggle");
+      var isOpen = card.classList.toggle("show");
       btn.classList.toggle("open", isOpen);
     }
 
     // Set default date to today
-    (function setDefaultDate() {
-      const today = new Date();
-      const y = today.getFullYear();
-      const m = String(today.getMonth() + 1).padStart(2, "0");
-      const d = String(today.getDate()).padStart(2, "0");
+    function setDefaultDate() {
+      var today = new Date();
+      var y = today.getFullYear();
+      var m = String(today.getMonth() + 1).padStart(2, "0");
+      var d = String(today.getDate()).padStart(2, "0");
       document.getElementById("entry-date").value = y + "-" + m + "-" + d;
-    })();
+    }
+    setDefaultDate();
+
+    // Wire entry page inputs → previewDraft
+    document.getElementById("poc-name").addEventListener("input", previewDraft);
+    document.getElementById("entry-date").addEventListener("change", previewDraft);
+
+    // Reset the entry form completely (used when coming from home)
+    function resetEntryForm() {
+      document.getElementById("dc-name").value = "";
+      document.getElementById("dc-search").value = "";
+      document.getElementById("poc-name").value = "";
+      setDefaultDate();
+      QUESTIONS.forEach(function(_, i) {
+        document.getElementById("q-" + i).value = "";
+        updateChecklistItem(i, false);
+      });
+      selectedFile = null;
+      updateFileChecklist(false);
+    }
 
     // Page navigation
     function navigate(page) {
-      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
       document.getElementById("page-" + page).classList.add("active");
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (page === "data") { populateFilterDC(); if (!allData.length && SCRIPT_URL) loadData(); }
     }
 
     // ── Chart bucket mappings ──
-    // Pending buckets: questions with "Pending" keyword
     const PENDING_BUCKETS = [
       { label: "Orphan", qi: 2 },
       { label: "HOV", qi: 4 },
@@ -1073,7 +1401,6 @@
       { label: "Non API", qi: 13 },
       { label: "RTO Marking", qi: 16 }
     ];
-    // Resolved buckets: questions with "Resolved"/"Salvaged" keyword
     const RESOLVED_BUCKETS = [
       { label: "Orphan", qi: 3 },
       { label: "HOV", qi: 5 },
@@ -1084,7 +1411,6 @@
       { label: "Dock Manifests", qi: 15 },
       { label: "RTO Marking", qi: 17 }
     ];
-    // Comparison buckets: matched pending vs resolved by category
     const COMPARE_BUCKETS = [
       { label: "Orphan", pqi: 2, rqi: 3 },
       { label: "HOV", pqi: 4, rqi: 5 },
@@ -1096,46 +1422,52 @@
     ];
 
     const CHART_COLORS = [
-      "#FFFFFF","#F5A623","#AACC00","#5DADE2",
-      "#BB8FCE","#F1948A","#76D7C4","#F7DC6F",
+      "#008771","#D4D026","#005B4F","#5DADE2",
+      "#BB8FCE","#E67E22","#76D7C4","#F7DC6F",
       "#85929E","#AED6F1"
     ];
 
     let chartPendency = null, chartResolved = null, chartComparison = null;
 
     function populateFilterDC() {
-      const filter = document.getElementById("filter-dc");
+      var filter = document.getElementById("filter-dc");
       if (filter.options.length > 1) return;
-      const main = document.getElementById("dc-name");
-      for (let i = 1; i < main.options.length; i++) {
-        const opt = document.createElement("option");
-        opt.value = main.options[i].value;
-        opt.textContent = main.options[i].textContent;
+      DC_LIST.forEach(function(dc) {
+        var opt = document.createElement("option");
+        opt.value = dc;
+        opt.textContent = dc;
         filter.appendChild(opt);
-      }
+      });
     }
 
     function populateFilterDates() {
-      const sel = document.getElementById("filter-date");
-      const currentVal = sel.value;
+      var sel = document.getElementById("filter-date");
+      var currentVal = sel.value;
       sel.innerHTML = '<option value="">All Dates</option>';
-      const dates = [...new Set(allData.map(r => r[3]).filter(Boolean))].sort().reverse();
-      dates.forEach(d => {
-        const opt = document.createElement("option");
+      var dates = Array.from(new Set(allData.map(function(r) { return r[3]; }).filter(Boolean))).sort().reverse();
+      dates.forEach(function(d) {
+        var opt = document.createElement("option");
         opt.value = d;
         opt.textContent = d;
         sel.appendChild(opt);
       });
-      if (currentVal && dates.includes(currentVal)) sel.value = currentVal;
+      if (currentVal && dates.indexOf(currentVal) !== -1) sel.value = currentVal;
     }
 
     function goToQuestions() {
-      const dc = document.getElementById("dc-name").value;
-      const poc = document.getElementById("poc-name").value.trim();
-      const date = document.getElementById("entry-date").value;
+      var dc = document.getElementById("dc-name").value;
+      var poc = document.getElementById("poc-name").value.trim();
+      var date = document.getElementById("entry-date").value;
       if (!dc) { showToast("Please select a DC", true); return; }
       if (!poc) { showToast("Please enter POC name", true); return; }
       if (!date) { showToast("Please select a date", true); return; }
+
+      // Reset all question inputs and checklist before restoring draft
+      QUESTIONS.forEach(function(_, i) {
+        document.getElementById("q-" + i).value = "";
+        updateChecklistItem(i, false);
+      });
+      if (selectedFile) removeFile();
 
       document.getElementById("meta-dc").textContent = dc;
       document.getElementById("meta-poc").textContent = poc;
@@ -1143,15 +1475,16 @@
 
       navigate("questions");
       restoreDraft();
+      checkSubmitReady();
     }
 
     function formatDate(iso) {
-      const d = new Date(iso + "T00:00:00");
+      var d = new Date(iso + "T00:00:00");
       return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
     }
 
     function handleFile(input) {
-      const file = input.files[0];
+      var file = input.files[0];
       if (!file) return;
       if (file.size > 50 * 1024 * 1024) {
         showToast("File exceeds 50 MB limit", true);
@@ -1163,6 +1496,7 @@
       document.getElementById("file-size-display").textContent = formatSize(file.size);
       document.getElementById("file-info").classList.add("show");
       updateFileChecklist(true);
+      checkSubmitReady();
     }
 
     function removeFile() {
@@ -1170,6 +1504,7 @@
       document.getElementById("file-input").value = "";
       document.getElementById("file-info").classList.remove("show");
       updateFileChecklist(false);
+      checkSubmitReady();
     }
 
     function formatSize(bytes) {
@@ -1179,10 +1514,10 @@
     }
 
     // Drag & drop
-    const zone = document.getElementById("upload-zone");
-    zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("dragover"); });
-    zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
-    zone.addEventListener("drop", e => {
+    var zone = document.getElementById("upload-zone");
+    zone.addEventListener("dragover", function(e) { e.preventDefault(); zone.classList.add("dragover"); });
+    zone.addEventListener("dragleave", function() { zone.classList.remove("dragover"); });
+    zone.addEventListener("drop", function(e) {
       e.preventDefault();
       zone.classList.remove("dragover");
       if (e.dataTransfer.files.length) {
@@ -1197,14 +1532,14 @@
         return;
       }
 
-      const dc = document.getElementById("dc-name").value;
-      const poc = document.getElementById("poc-name").value.trim();
-      const date = document.getElementById("entry-date").value;
+      var dc = document.getElementById("dc-name").value;
+      var poc = document.getElementById("poc-name").value.trim();
+      var date = document.getElementById("entry-date").value;
 
-      const answers = [];
-      let allFilled = true;
-      QUESTIONS.forEach((_, i) => {
-        const val = document.getElementById("q-" + i).value;
+      var answers = [];
+      var allFilled = true;
+      QUESTIONS.forEach(function(_, i) {
+        var val = document.getElementById("q-" + i).value;
         answers.push(val);
         if (!val) allFilled = false;
       });
@@ -1213,13 +1548,17 @@
         showToast("Please fill in all fields", true);
         return;
       }
+      if (!selectedFile) {
+        showToast("Please attach the base file", true);
+        return;
+      }
 
-      const btn = document.getElementById("submit-btn");
+      var btn = document.getElementById("submit-btn");
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
       try {
-        const payload = {
+        var payload = {
           action: "submit",
           dc: dc,
           poc: poc,
@@ -1230,7 +1569,7 @@
         };
 
         if (selectedFile) {
-          const b64 = await fileToBase64(selectedFile);
+          var b64 = await fileToBase64(selectedFile);
           payload.fileData = b64;
           payload.fileMime = selectedFile.type || "application/octet-stream";
         }
@@ -1250,20 +1589,21 @@
       } finally {
         btn.disabled = false;
         btn.innerHTML = "Submit";
+        checkSubmitReady();
       }
     }
 
     function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function() { resolve(reader.result.split(",")[1]); };
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
 
     function resetForm() {
-      QUESTIONS.forEach((_, i) => { document.getElementById("q-" + i).value = ""; });
+      QUESTIONS.forEach(function(_, i) { document.getElementById("q-" + i).value = ""; });
       removeFile();
       navigate("home");
     }
@@ -1273,12 +1613,12 @@
         showToast("Apps Script URL not configured", true);
         return;
       }
-      const container = document.getElementById("data-container");
-      container.innerHTML = '<div class="empty-state"><div class="spinner" style="border-color:var(--border);border-top-color:var(--primary);width:32px;height:32px"></div><p style="margin-top:16px">Loading data...</p></div>';
+      var container = document.getElementById("data-container");
+      container.innerHTML = '<div class="empty-state"><div class="spinner" style="border-color:var(--border);border-top-color:var(--nav);width:32px;height:32px"></div><p style="margin-top:16px">Loading data...</p></div>';
 
       try {
-        const res = await fetch(SCRIPT_URL + "?action=getData");
-        const json = await res.json();
+        var res = await fetch(SCRIPT_URL + "?action=getData");
+        var json = await res.json();
         allData = json.data || [];
         populateFilterDates();
         applyFilters();
@@ -1288,20 +1628,20 @@
     }
 
     function applyFilters() {
-      const dcFilter = document.getElementById("filter-dc").value;
-      const dateFilter = document.getElementById("filter-date").value;
-      let filtered = allData;
-      if (dcFilter) filtered = filtered.filter(r => r[1] === dcFilter);
-      if (dateFilter) filtered = filtered.filter(r => r[3] === dateFilter);
+      var dcFilter = document.getElementById("filter-dc").value;
+      var dateFilter = document.getElementById("filter-date").value;
+      var filtered = allData;
+      if (dcFilter) filtered = filtered.filter(function(r) { return r[1] === dcFilter; });
+      if (dateFilter) filtered = filtered.filter(function(r) { return r[3] === dateFilter; });
       renderCharts(filtered);
       renderTable(filtered);
     }
 
     function sumBucketValues(data, buckets) {
-      return buckets.map(b => {
-        let total = 0;
-        data.forEach(row => {
-          const val = parseFloat(row[b.qi + 4]);
+      return buckets.map(function(b) {
+        var total = 0;
+        data.forEach(function(row) {
+          var val = parseFloat(row[b.qi + 4]);
           if (!isNaN(val)) total += val;
         });
         return total;
@@ -1309,17 +1649,25 @@
     }
 
     function getChartTheme() {
-      return {
+      var isDark = document.documentElement.getAttribute("data-theme") === "dark" ||
+        (!document.documentElement.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      return isDark ? {
         gridColor: "rgba(255,255,255,0.08)",
         textColor: "#999999",
         tooltipBg: "#1A1A1A",
         tooltipText: "#F5F5F5",
         tooltipBorder: "#333333"
+      } : {
+        gridColor: "rgba(0,0,0,0.06)",
+        textColor: "#5F6368",
+        tooltipBg: "#FFFFFF",
+        tooltipText: "#1A1A1A",
+        tooltipBorder: "#DDE0DB"
       };
     }
 
     function chartDefaults() {
-      const t = getChartTheme();
+      var t = getChartTheme();
       return {
         responsive: true,
         maintainAspectRatio: false,
@@ -1352,7 +1700,7 @@
     }
 
     function renderCharts(data) {
-      const hasData = data.length > 0;
+      var hasData = data.length > 0;
 
       // ── OVERALL PENDENCY ──
       document.getElementById("pendency-empty").style.display = hasData ? "none" : "block";
@@ -1360,21 +1708,20 @@
       document.getElementById("kpi-pendency").style.display = hasData ? "flex" : "none";
 
       if (hasData) {
-        const pendVals = sumBucketValues(data, PENDING_BUCKETS);
-        const pendLabels = PENDING_BUCKETS.map(b => b.label);
-        // Total pending KPI (q0 → col 4)
-        let totalPending = 0;
-        data.forEach(r => { const v = parseFloat(r[4]); if (!isNaN(v)) totalPending += v; });
+        var pendVals = sumBucketValues(data, PENDING_BUCKETS);
+        var pendLabels = PENDING_BUCKETS.map(function(b) { return b.label; });
+        var totalPending = 0;
+        data.forEach(function(r) { var v = parseFloat(r[4]); if (!isNaN(v)) totalPending += v; });
 
         document.getElementById("kpi-pendency").innerHTML =
           '<div class="kpi-card"><div class="kpi-value">' + totalPending.toLocaleString() + '</div><div class="kpi-label">Total Pending</div></div>' +
-          pendVals.map((v, i) =>
-            '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + pendLabels[i] + '</div></div>'
-          ).join("");
+          pendVals.map(function(v, i) {
+            return '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + pendLabels[i] + '</div></div>';
+          }).join("");
 
         if (chartPendency) chartPendency.destroy();
-        const ctx1 = document.getElementById("chart-pendency").getContext("2d");
-        const opts1 = chartDefaults();
+        var ctx1 = document.getElementById("chart-pendency").getContext("2d");
+        var opts1 = chartDefaults();
         chartPendency = new Chart(ctx1, {
           type: "bar",
           data: {
@@ -1382,7 +1729,7 @@
             datasets: [{
               label: "Pending",
               data: pendVals,
-              backgroundColor: CHART_COLORS.slice(0, pendVals.length).map(c => c + "cc"),
+              backgroundColor: CHART_COLORS.slice(0, pendVals.length).map(function(c) { return c + "cc"; }),
               borderColor: CHART_COLORS.slice(0, pendVals.length),
               borderWidth: 1.5,
               borderRadius: 4,
@@ -1399,20 +1746,20 @@
       document.getElementById("kpi-resolved").style.display = hasData ? "flex" : "none";
 
       if (hasData) {
-        const resVals = sumBucketValues(data, RESOLVED_BUCKETS);
-        const resLabels = RESOLVED_BUCKETS.map(b => b.label);
-        let totalResolved = 0;
-        data.forEach(r => { const v = parseFloat(r[5]); if (!isNaN(v)) totalResolved += v; });
+        var resVals = sumBucketValues(data, RESOLVED_BUCKETS);
+        var resLabels = RESOLVED_BUCKETS.map(function(b) { return b.label; });
+        var totalResolved = 0;
+        data.forEach(function(r) { var v = parseFloat(r[5]); if (!isNaN(v)) totalResolved += v; });
 
         document.getElementById("kpi-resolved").innerHTML =
           '<div class="kpi-card"><div class="kpi-value">' + totalResolved.toLocaleString() + '</div><div class="kpi-label">Total Resolved</div></div>' +
-          resVals.map((v, i) =>
-            '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + resLabels[i] + '</div></div>'
-          ).join("");
+          resVals.map(function(v, i) {
+            return '<div class="kpi-card"><div class="kpi-value">' + v.toLocaleString() + '</div><div class="kpi-label">' + resLabels[i] + '</div></div>';
+          }).join("");
 
         if (chartResolved) chartResolved.destroy();
-        const ctx2 = document.getElementById("chart-resolved").getContext("2d");
-        const opts2 = chartDefaults();
+        var ctx2 = document.getElementById("chart-resolved").getContext("2d");
+        var opts2 = chartDefaults();
         chartResolved = new Chart(ctx2, {
           type: "bar",
           data: {
@@ -1420,7 +1767,7 @@
             datasets: [{
               label: "Resolved",
               data: resVals,
-              backgroundColor: CHART_COLORS.slice(0, resVals.length).map(c => c + "cc"),
+              backgroundColor: CHART_COLORS.slice(0, resVals.length).map(function(c) { return c + "cc"; }),
               borderColor: CHART_COLORS.slice(0, resVals.length),
               borderWidth: 1.5,
               borderRadius: 4,
@@ -1436,21 +1783,21 @@
       document.getElementById("chart-comparison").style.display = hasData ? "block" : "none";
 
       if (hasData) {
-        const compLabels = COMPARE_BUCKETS.map(b => b.label);
-        const compPending = COMPARE_BUCKETS.map(b => {
-          let sum = 0;
-          data.forEach(r => { const v = parseFloat(r[b.pqi + 4]); if (!isNaN(v)) sum += v; });
+        var compLabels = COMPARE_BUCKETS.map(function(b) { return b.label; });
+        var compPending = COMPARE_BUCKETS.map(function(b) {
+          var sum = 0;
+          data.forEach(function(r) { var v = parseFloat(r[b.pqi + 4]); if (!isNaN(v)) sum += v; });
           return sum;
         });
-        const compResolved = COMPARE_BUCKETS.map(b => {
-          let sum = 0;
-          data.forEach(r => { const v = parseFloat(r[b.rqi + 4]); if (!isNaN(v)) sum += v; });
+        var compResolved = COMPARE_BUCKETS.map(function(b) {
+          var sum = 0;
+          data.forEach(function(r) { var v = parseFloat(r[b.rqi + 4]); if (!isNaN(v)) sum += v; });
           return sum;
         });
 
         if (chartComparison) chartComparison.destroy();
-        const ctx3 = document.getElementById("chart-comparison").getContext("2d");
-        const opts3 = chartDefaults();
+        var ctx3 = document.getElementById("chart-comparison").getContext("2d");
+        var opts3 = chartDefaults();
         opts3.plugins.legend = {
           display: true,
           position: "top",
@@ -1468,8 +1815,8 @@
               {
                 label: "Pending (Entry)",
                 data: compPending,
-                backgroundColor: "#F5A623cc",
-                borderColor: "#F5A623",
+                backgroundColor: "#D4D026cc",
+                borderColor: "#D4D026",
                 borderWidth: 1.5,
                 borderRadius: 4,
                 maxBarThickness: 40
@@ -1477,8 +1824,8 @@
               {
                 label: "Resolved",
                 data: compResolved,
-                backgroundColor: "#FFFFFFcc",
-                borderColor: "#FFFFFF",
+                backgroundColor: "#008771cc",
+                borderColor: "#008771",
                 borderWidth: 1.5,
                 borderRadius: 4,
                 maxBarThickness: 40
@@ -1491,20 +1838,20 @@
     }
 
     function renderTable(data) {
-      const container = document.getElementById("data-container");
+      var container = document.getElementById("data-container");
       if (!data.length) {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128202;</div><p>No data found.</p></div>';
         return;
       }
-      const headers = ["Timestamp", "DC Name", "POC Name", "Date", ...QUESTIONS, "Base File"];
-      let html = '<div class="data-table-wrap"><table class="data-table"><thead><tr>';
-      headers.forEach(h => { html += "<th>" + h + "</th>"; });
+      var headers = ["Timestamp", "DC Name", "POC Name", "Date"].concat(QUESTIONS).concat(["Base File"]);
+      var html = '<div class="data-table-wrap"><table class="data-table"><thead><tr>';
+      headers.forEach(function(h) { html += "<th>" + h + "</th>"; });
       html += "</tr></thead><tbody>";
-      data.forEach(row => {
+      data.forEach(function(row) {
         html += "<tr>";
-        row.forEach((cell, ci) => {
+        row.forEach(function(cell, ci) {
           if (ci === row.length - 1 && cell && cell.startsWith && cell.startsWith("http")) {
-            html += '<td><a href="' + cell + '" target="_blank" rel="noopener" style="color:var(--primary)">View File</a></td>';
+            html += '<td><a href="' + cell + '" target="_blank" rel="noopener" style="color:var(--nav)">View File</a></td>';
           } else {
             html += "<td>" + (cell != null ? cell : "") + "</td>";
           }
@@ -1516,10 +1863,10 @@
     }
 
     function showToast(msg, isError) {
-      const t = document.getElementById("toast");
+      var t = document.getElementById("toast");
       t.textContent = msg;
       t.className = "toast show" + (isError ? " error" : "");
-      setTimeout(() => { t.className = "toast"; }, 3500);
+      setTimeout(function() { t.className = "toast"; }, 3500);
     }
 
     if (SCRIPT_URL) document.getElementById("config-banner").classList.remove("show");
