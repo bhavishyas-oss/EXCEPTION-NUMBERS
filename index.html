@@ -178,12 +178,12 @@
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
-      max-width: 640px;
+      max-width: 960px;
     }
     .home-btn {
       flex: 1;
-      min-width: 240px;
-      max-width: 300px;
+      min-width: 220px;
+      max-width: 280px;
       background: var(--bg-surface);
       border: 2px solid var(--border);
       border-radius: 16px;
@@ -805,6 +805,11 @@
           <span class="home-btn-label">THROUGHPUT FORM</span>
           <div class="home-btn-desc">Submit daily exception area numbers</div>
         </button>
+        <button class="home-btn" onclick="navigate('pocs')">
+          <span class="home-btn-icon">&#128101;</span>
+          <span class="home-btn-label">EXCEPTION POCs</span>
+          <div class="home-btn-desc">Manage exception area POC records</div>
+        </button>
         <button class="home-btn" onclick="navigate('data')">
           <span class="home-btn-icon">&#128202;</span>
           <span class="home-btn-label">DATA VIEW</span>
@@ -850,6 +855,51 @@
     <div class="checklist-card" id="checklist-card">
       <h3>Questions to Complete</h3>
       <div class="checklist-grid" id="checklist-grid"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: EXCEPTION POCs -->
+  <div id="page-pocs" class="page">
+    <button class="back-btn" onclick="navigate('home')">&#8592; Home</button>
+    <div class="form-card">
+      <h2>Exception POCs</h2>
+      <div class="init-grid">
+        <div class="field-group">
+          <label class="field-label field-required">Site Name</label>
+          <div class="dc-search-wrap" id="poc-site-search-wrap">
+            <input type="text" class="dc-search-input" id="poc-site-search" placeholder="Search or select site" autocomplete="off">
+            <input type="hidden" id="poc-site-name" value="">
+            <div class="dc-dropdown" id="poc-site-dropdown"></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label field-required" for="poc-person-name">Name</label>
+          <input type="text" id="poc-person-name" placeholder="Enter name">
+        </div>
+        <div class="field-group">
+          <label class="field-label field-required" for="poc-id">ID</label>
+          <input type="text" id="poc-id" placeholder="Enter ID">
+        </div>
+        <div class="field-group">
+          <label class="field-label field-required" for="poc-status">Activation Status</label>
+          <select id="poc-status">
+            <option value="">Select status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="field-group full-row">
+          <label class="field-label field-required" for="poc-role">Role</label>
+          <input type="text" id="poc-role" placeholder="Enter role">
+        </div>
+      </div>
+      <div class="go-row">
+        <button class="btn btn-go" id="poc-submit-btn" onclick="submitPOC()">Submit</button>
+      </div>
+    </div>
+
+    <div class="config-banner show" id="poc-config-banner">
+      <strong>Setup required:</strong> Deploy the POC Google Apps Script on the Exception POCs sheet and paste the web app URL into the <code>POC_SCRIPT_URL</code> variable in this file.
     </div>
   </div>
 
@@ -1044,8 +1094,9 @@
     ];
 
     // ──────────────────────────────────────────────────────────
-    // SET YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE
+    // SET YOUR DEPLOYED APPS SCRIPT WEB APP URLs HERE
     const SCRIPT_URL = "";
+    const POC_SCRIPT_URL = "";
     // ──────────────────────────────────────────────────────────
 
     let selectedFile = null;
@@ -1870,6 +1921,166 @@
     }
 
     if (SCRIPT_URL) document.getElementById("config-banner").classList.remove("show");
+    if (POC_SCRIPT_URL) document.getElementById("poc-config-banner").classList.remove("show");
+
+    // ──────────────────────────────────────────────────────────
+    // EXCEPTION POCs — searchable site dropdown + submit
+    // ──────────────────────────────────────────────────────────
+    (function initPOCSiteSearch() {
+      var dropdown = document.getElementById("poc-site-dropdown");
+      var input = document.getElementById("poc-site-search");
+      var hidden = document.getElementById("poc-site-name");
+
+      DC_LIST.forEach(function(dc) {
+        var div = document.createElement("div");
+        div.className = "dc-option";
+        div.textContent = dc;
+        div.addEventListener("mousedown", function(e) {
+          e.preventDefault();
+          hidden.value = dc;
+          input.value = dc;
+          dropdown.classList.remove("open");
+        });
+        dropdown.appendChild(div);
+      });
+
+      input.addEventListener("focus", function() {
+        filterPOCSiteDropdown(this.value);
+        dropdown.classList.add("open");
+      });
+
+      input.addEventListener("input", function() {
+        hidden.value = "";
+        filterPOCSiteDropdown(this.value);
+        dropdown.classList.add("open");
+      });
+
+      input.addEventListener("blur", function() {
+        setTimeout(function() {
+          dropdown.classList.remove("open");
+          if (!hidden.value && input.value) {
+            var match = DC_LIST.find(function(d) { return d.toLowerCase() === input.value.toLowerCase(); });
+            if (match) {
+              hidden.value = match;
+              input.value = match;
+            } else {
+              input.value = "";
+            }
+          }
+        }, 150);
+      });
+
+      var highlightIdx = -1;
+      input.addEventListener("keydown", function(e) {
+        var visible = Array.from(dropdown.querySelectorAll(".dc-option")).filter(function(o) { return o.style.display !== "none"; });
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          highlightIdx = Math.min(highlightIdx + 1, visible.length - 1);
+          highlightPOCOptions(visible, highlightIdx);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          highlightIdx = Math.max(highlightIdx - 1, 0);
+          highlightPOCOptions(visible, highlightIdx);
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          if (highlightIdx >= 0 && visible[highlightIdx]) {
+            hidden.value = visible[highlightIdx].textContent;
+            input.value = visible[highlightIdx].textContent;
+            dropdown.classList.remove("open");
+          }
+        } else if (e.key === "Escape") {
+          dropdown.classList.remove("open");
+        } else {
+          highlightIdx = -1;
+        }
+      });
+
+      function highlightPOCOptions(visible, idx) {
+        visible.forEach(function(o, i) {
+          o.classList.toggle("highlighted", i === idx);
+          if (i === idx) o.scrollIntoView({ block: "nearest" });
+        });
+      }
+    })();
+
+    function filterPOCSiteDropdown(query) {
+      var dropdown = document.getElementById("poc-site-dropdown");
+      var options = dropdown.querySelectorAll(".dc-option");
+      var q = query.toLowerCase();
+      var count = 0;
+      options.forEach(function(opt) {
+        var match = opt.textContent.toLowerCase().indexOf(q) !== -1;
+        opt.style.display = match ? "" : "none";
+        if (match) count++;
+      });
+      var noMatch = dropdown.querySelector(".dc-no-match");
+      if (count === 0) {
+        if (!noMatch) {
+          noMatch = document.createElement("div");
+          noMatch.className = "dc-no-match";
+          noMatch.textContent = "No matching site found";
+          dropdown.appendChild(noMatch);
+        }
+      } else if (noMatch) {
+        noMatch.remove();
+      }
+    }
+
+    async function submitPOC() {
+      if (!POC_SCRIPT_URL) {
+        showToast("POC Apps Script URL not configured — see setup guide", true);
+        return;
+      }
+
+      var site = document.getElementById("poc-site-name").value;
+      var name = document.getElementById("poc-person-name").value.trim();
+      var id = document.getElementById("poc-id").value.trim();
+      var status = document.getElementById("poc-status").value;
+      var role = document.getElementById("poc-role").value.trim();
+
+      if (!site) { showToast("Please select a site", true); return; }
+      if (!name) { showToast("Please enter name", true); return; }
+      if (!id) { showToast("Please enter ID", true); return; }
+      if (!status) { showToast("Please select activation status", true); return; }
+      if (!role) { showToast("Please enter role", true); return; }
+
+      var btn = document.getElementById("poc-submit-btn");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      try {
+        var payload = {
+          action: "submitPOC",
+          site: site,
+          name: name,
+          id: id,
+          status: status,
+          role: role,
+          timestamp: new Date().toISOString()
+        };
+
+        await fetch(POC_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload)
+        });
+
+        showToast("POC record submitted successfully!");
+        // Reset form
+        document.getElementById("poc-site-name").value = "";
+        document.getElementById("poc-site-search").value = "";
+        document.getElementById("poc-person-name").value = "";
+        document.getElementById("poc-id").value = "";
+        document.getElementById("poc-status").value = "";
+        document.getElementById("poc-role").value = "";
+      } catch (err) {
+        showToast("Submission failed: " + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit";
+      }
+    }
   </script>
 
 </body>
